@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mobile/view/customer/payment_history_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/controller/auth_controller.dart';
@@ -101,6 +102,16 @@ class _HomePageViewState extends State<HomePageView> {
           ],
         ),
         actions: [
+
+          IconButton(
+            tooltip: 'ประวัติจ่ายเเงิน',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const PaymentHistoryView(),
+              ),
+            ),
+            icon: const Icon(Icons.receipt_long_outlined),
+          ),
           IconButton(
             tooltip: 'คูปองของฉัน',
             onPressed: () => Navigator.of(context).push(

@@ -378,14 +378,16 @@ const updatePayment = async (req, res) => {
             [status, status, paymentId]
         );
 
-        // เมื่อชำระเงินสำเร็จ ให้เริ่มกระบวนการเติมเกม
+        // เมื่อชำระเงินสำเร็จ ให้ปิด order
         if (
             status === 'Paid' &&
             order.order_status === 'Pending'
         ) {
             const [orderUpdate] = await connection.query(
                 `UPDATE orders
-                SET status = 'Processing'
+                SET
+                    status = 'Completed',
+                    completed_at = COALESCE(completed_at, NOW())
                 WHERE order_id = ?
                 AND status = 'Pending'`,
                 [orderId]
@@ -393,7 +395,7 @@ const updatePayment = async (req, res) => {
 
             if (orderUpdate.affectedRows !== 1) {
                 const error = new Error(
-                    'Failed to move order to Processing'
+                    'Failed to complete order'
                 );
                 error.statusCode = 409;
                 throw error;

@@ -154,7 +154,7 @@ class _PaymentHistoryViewState extends State<PaymentHistoryView> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.redDark, AppColors.redDark],
+          colors: [AppColors.redSoft, AppColors.redNormal],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -165,7 +165,7 @@ class _PaymentHistoryViewState extends State<PaymentHistoryView> {
         children: [
           const Text(
             'สรุปการชำระเงิน',
-            style: TextStyle(color: AppColors.inkMuted, fontSize: 14),
+            style: TextStyle(color: AppColors.black, fontSize: 14),
           ),
 
           const SizedBox(height: 14),
@@ -222,7 +222,7 @@ class _PaymentHistoryViewState extends State<PaymentHistoryView> {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppColors.inkMuted, fontSize: 11),
+            style: const TextStyle(color: AppColors.black, fontSize: 11),
           ),
         ],
       ),
