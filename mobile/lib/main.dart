@@ -19,7 +19,7 @@ import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/service/customer/customer_game_service.dart';
 import 'package:mobile/service/customer/customer_package_service.dart';
 import 'package:mobile/service/customer/customer_profile_service.dart';
-import 'package:mobile/view/auth/login_view.dart';
+import 'package:mobile/view/auth/index_view.dart';
 import 'package:mobile/view/admin/homepage_view.dart';
 import 'package:mobile/view/customer/homepage_view.dart';
 
@@ -117,7 +117,7 @@ class AuthGate extends StatelessWidget {
     }
 
     if (!auth.isAuthenticated) {
-      return const LoginView();
+      return const IndexView();
     }
 
     if (auth.isAdmin) {

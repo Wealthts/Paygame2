@@ -29,10 +29,14 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _login() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     FocusScope.of(context).unfocus();
-    await context.read<AuthController>().login(
+    final success = await context.read<AuthController>().login(
       username: _usernameController.text.trim(),
       password: _passwordController.text,
     );
+
+    if (success && mounted) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
   }
 
   Future<void> _openRegister() async {
