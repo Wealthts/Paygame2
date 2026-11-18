@@ -142,7 +142,14 @@ async function startServer() {
         process.on('SIGTERM', () => shutdown('SIGTERM'));
 
     } catch (error) {
-        console.error('Server startup failed:', error.message);
+        console.error('Server startup failed:', {
+            message: error.message,
+            code: error.code,
+            errno: error.errno,
+            syscall: error.syscall,
+            address: error.address,
+            port: error.port
+        });
         try {
             await db.promise().end();
         } catch (dbError) {
