@@ -312,7 +312,7 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.red, AppColors.redDark],
+          colors: [AppColors.redSoft, AppColors.red],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -399,7 +399,7 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
               _selectedFilter = index;
             });
           },
-          selectedColor: AppColors.redDark,
+          selectedColor: AppColors.redSoft,
           backgroundColor: AppColors.white,
           labelStyle: TextStyle(
             color: selected ? AppColors.ink : AppColors.inkMuted,

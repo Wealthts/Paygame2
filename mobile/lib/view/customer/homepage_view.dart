@@ -113,7 +113,7 @@ class _HomePageViewState extends State<HomePageView> {
             ),
             icon: const Icon(Icons.receipt_outlined),
           ),
-
+          SizedBox(width: 10),
           IconButton(
             tooltip: 'ประวัติจ่ายเเงิน',
             onPressed: () => Navigator.of(context).push(
@@ -123,6 +123,7 @@ class _HomePageViewState extends State<HomePageView> {
             ),
             icon: const Icon(Icons.receipt_long_outlined),
           ),
+          SizedBox(width: 10),
           IconButton(
             tooltip: 'คูปองของฉัน',
             onPressed: () => Navigator.of(context).push(
@@ -132,6 +133,8 @@ class _HomePageViewState extends State<HomePageView> {
             ),
             icon: const Icon(Icons.confirmation_number_outlined),
           ),
+
+          SizedBox(width: 50),
           IconButton(
             tooltip: 'ออกจากระบบ',
             onPressed: () => context.read<AuthController>().logout(),

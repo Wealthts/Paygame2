@@ -122,7 +122,7 @@ class _CustomerProfileViewState extends State<CustomerProfileView> {
                     child: Text(
                       'PAYGAME ACCOUNT',
                       style: TextStyle(
-                        color: AppColors.inkMuted,
+                        color: AppColors.black,
                         fontSize: 11,
                         letterSpacing: 1.5,
                       ),
@@ -152,7 +152,7 @@ class _CustomerProfileViewState extends State<CustomerProfileView> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.redDark, AppColors.redDark],
+          colors: [AppColors.redSoft, AppColors.redNormal, AppColors.redDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -162,11 +162,11 @@ class _CustomerProfileViewState extends State<CustomerProfileView> {
         children: [
           CircleAvatar(
             radius: 42,
-            backgroundColor: AppColors.red,
+            backgroundColor: AppColors.redNormal,
             child: Text(
               initial,
               style: const TextStyle(
-                color: AppColors.ink,
+                color: AppColors.white,
                 fontSize: 34,
                 fontWeight: FontWeight.bold,
               ),
@@ -179,7 +179,7 @@ class _CustomerProfileViewState extends State<CustomerProfileView> {
             name,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: AppColors.ink,
+              color: AppColors.white,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
@@ -189,7 +189,7 @@ class _CustomerProfileViewState extends State<CustomerProfileView> {
 
           Text(
             '@${user.username}',
-            style: const TextStyle(color: AppColors.inkMuted, fontSize: 14),
+            style: const TextStyle(color: AppColors.white, fontSize: 14),
           ),
 
           const SizedBox(height: 14),
@@ -203,7 +203,7 @@ class _CustomerProfileViewState extends State<CustomerProfileView> {
             child: Text(
               user.isAdmin ? 'ADMIN' : 'CUSTOMER',
               style: const TextStyle(
-                color: AppColors.ink,
+                color: AppColors.white,
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,

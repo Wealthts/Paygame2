@@ -10,6 +10,7 @@ class CustomerPaymentView extends StatefulWidget {
   final double amount;
   final String gameName;
   final String packageName;
+  final bool returnToOrder;
 
   const CustomerPaymentView({
     super.key,
@@ -17,6 +18,7 @@ class CustomerPaymentView extends StatefulWidget {
     required this.amount,
     required this.gameName,
     required this.packageName,
+    this.returnToOrder = false,
   });
 
   @override
@@ -476,13 +478,19 @@ class _CustomerPaymentViewState extends State<CustomerPaymentView> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  if (widget.returnToOrder) {
+                    Navigator.of(context).pop(true);
+                  } else {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.red,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('กลับไปหน้าแรก'),
+                child: Text(
+                  widget.returnToOrder ? 'กลับไปคำสั่งซื้อ' : 'กลับไปหน้าแรก',
+                ),
               ),
             ),
           ],

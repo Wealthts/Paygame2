@@ -142,7 +142,7 @@ class _CustomerReceiptHistoryViewState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.redDark, AppColors.redDark],
+          colors: [AppColors.redSoft, AppColors.redNormal],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
