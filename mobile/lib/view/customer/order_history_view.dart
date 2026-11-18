@@ -186,7 +186,7 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
         children: [
           const Text(
             'สรุปคำสั่งซื้อ',
-            style: TextStyle(color: AppColors.inkMuted, fontSize: 14),
+            style: TextStyle(color: AppColors.white, fontSize: 14),
           ),
 
           const SizedBox(height: 14),
@@ -237,7 +237,7 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
           Text(
             value,
             style: const TextStyle(
-              color: AppColors.ink,
+              color: AppColors.white,
               fontSize: 23,
               fontWeight: FontWeight.bold,
             ),
@@ -247,7 +247,7 @@ class _OrderHistoryViewState extends State<OrderHistoryView> {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppColors.inkMuted, fontSize: 11),
+            style: const TextStyle(color: AppColors.white, fontSize: 11),
           ),
         ],
       ),

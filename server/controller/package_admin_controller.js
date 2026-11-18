@@ -141,13 +141,15 @@ async function createPackage(req, res) {
                 game_id,
                 package_name,
                 price,
+                reward_points,
                 is_active
             )
-            VALUES (?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?)`,
             [
                 data.game_id,
                 data.package_name,
                 data.price,
+                0,
                 data.is_active
             ]
         );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,7 @@ class UserDetailsView extends StatefulWidget {
 
 class _UserDetailsViewState extends State<UserDetailsView> {
   late final UserDetailsController controller;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
@@ -24,10 +27,14 @@ class _UserDetailsViewState extends State<UserDetailsView> {
     controller = UserDetailsController(context.read<UserManagementService>());
 
     controller.loadDetails(widget.userId);
+    _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (mounted) controller.loadDetails(widget.userId);
+    });
   }
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     controller.dispose();
     super.dispose();
   }

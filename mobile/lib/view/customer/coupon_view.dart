@@ -13,9 +13,17 @@ class CustomerCouponView extends StatefulWidget {
 }
 
 class _CustomerCouponViewState extends State<CustomerCouponView> {
+  final _couponCodeController = TextEditingController();
   late Future<List<CustomerCouponModel>> _couponsFuture;
 
   int _selectedFilter = 0;
+  bool _isClaimingCoupon = false;
+
+  @override
+  void dispose() {
+    _couponCodeController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -52,6 +60,36 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
   // ========================================
   void _retryLoading() {
     setState(_loadCoupons);
+  }
+
+  Future<void> _claimCoupon() async {
+    final code = _couponCodeController.text.trim();
+    if (_isClaimingCoupon) return;
+    if (code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('กรุณากรอกรหัสคูปอง')),
+      );
+      return;
+    }
+
+    setState(() => _isClaimingCoupon = true);
+    try {
+      await context.read<UserCouponService>().claimCouponByCode(code);
+      if (!mounted) return;
+      _couponCodeController.clear();
+      setState(() {
+        _isClaimingCoupon = false;
+        _loadCoupons();
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('เพิ่มคูปองเข้าบัญชีแล้ว')));
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isClaimingCoupon = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error.toString())));
+    }
   }
 
   // ========================================
@@ -126,6 +164,10 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
                     used: usedCount,
                   ),
 
+                  const SizedBox(height: 16),
+
+                  _buildClaimCoupon(),
+
                   const SizedBox(height: 24),
 
                   const Text(
@@ -170,6 +212,94 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
     );
   }
 
+  Widget _buildClaimCoupon() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'มีโค้ดคูปอง?',
+            style: TextStyle(
+              color: AppColors.ink,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'กรอกรหัสเพื่อเพิ่มคูปองเข้าบัญชีของคุณ',
+            style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _couponCodeController,
+                  enabled: !_isClaimingCoupon,
+                  textCapitalization: TextCapitalization.characters,
+                  onSubmitted: (_) => _claimCoupon(),
+                  decoration: InputDecoration(
+                    hintText: 'กรอกรหัสคูปอง',
+                    prefixIcon: const Icon(Icons.confirmation_number_outlined),
+                    filled: true,
+                    fillColor: AppColors.cream,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 13,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.border),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.red),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isClaimingCoupon ? null : _claimCoupon,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.red,
+                    foregroundColor: AppColors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _isClaimingCoupon
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.white,
+                          ),
+                        )
+                      : const Text('เพิ่มคูปอง'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   // ========================================
   // Summary
   // ========================================
@@ -202,7 +332,7 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
               Text(
                 'คูปองส่วนลดของคุณ',
                 style: TextStyle(
-                  color: AppColors.ink,
+                  color: AppColors.white,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -232,7 +362,7 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
           Text(
             value.toString(),
             style: const TextStyle(
-              color: AppColors.ink,
+              color: AppColors.white,
               fontSize: 26,
               fontWeight: FontWeight.bold,
             ),
@@ -242,7 +372,7 @@ class _CustomerCouponViewState extends State<CustomerCouponView> {
 
           Text(
             label,
-            style: const TextStyle(color: AppColors.inkMuted, fontSize: 12),
+            style: const TextStyle(color: AppColors.white, fontSize: 12),
           ),
         ],
       ),
