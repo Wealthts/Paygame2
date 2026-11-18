@@ -1,5 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:mobile/view/customer/payment_history_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/controller/auth_controller.dart';
@@ -13,6 +12,8 @@ import 'package:mobile/view/customer/order_history_view.dart';
 import 'package:mobile/view/customer/package_view.dart';
 import 'package:mobile/view/customer/point_view.dart';
 import 'package:mobile/view/customer/user_view.dart';
+import 'package:mobile/view/customer/payment_history_view.dart';
+import 'package:mobile/view/customer/receipt_history_view.dart';
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -102,6 +103,16 @@ class _HomePageViewState extends State<HomePageView> {
           ],
         ),
         actions: [
+
+          IconButton(
+            tooltip: 'ประวัติใบเสร็จ',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const CustomerReceiptHistoryView(),
+              ),
+            ),
+            icon: const Icon(Icons.receipt_outlined),
+          ),
 
           IconButton(
             tooltip: 'ประวัติจ่ายเเงิน',
