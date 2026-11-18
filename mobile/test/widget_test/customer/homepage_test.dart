@@ -9,7 +9,7 @@ import 'package:mobile/view/customer/homepage_view.dart';
 import '../../support/fake_services.dart';
 
 void main() {
-  testWidgets('customer homepage loads game cards and live points balance', (tester) async {
+  testWidgets('customer homepage displays games and points', (tester) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -26,5 +26,25 @@ void main() {
     expect(find.text('Arena Test'), findsOneWidget);
     expect(find.text('1,250'), findsOneWidget);
     expect(find.text('แต้มสะสม'), findsOneWidget);
+    expect(find.text('เลือกเกมที่ต้องการเติม'), findsOneWidget);
+  });
+
+  testWidgets('customer homepage search filters game cards', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthController(FakeAuthService())),
+          Provider<CustomerGameService>(create: (_) => FakeCustomerGameService()),
+          Provider<PointService>(create: (_) => FakePointService()),
+        ],
+        child: const MaterialApp(home: HomePageView()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Arena Test'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'not found');
+    await tester.pump();
+    expect(find.text('Arena Test'), findsNothing);
   });
 }
