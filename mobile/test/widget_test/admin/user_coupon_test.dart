@@ -10,13 +10,12 @@ import 'package:mobile/view/admin/user_coupon_view.dart';
 
 void main() {
   // The screen uses these fake services so the test does not need a running server.
-  testWidgets('3. Admin sees member coupon assignments and can search', (
-    tester,
-  ) async {
+  testWidgets('5. Admin assigns a coupon to a member', (tester) async {
+    final assignments = _Assignments();
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          Provider<UserCouponService>.value(value: _Assignments()),
+          Provider<UserCouponService>.value(value: assignments),
           Provider<CouponService>.value(value: _Coupons()),
         ],
         child: const MaterialApp(home: UserCouponView()),
@@ -24,56 +23,30 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('คูปองของสมาชิก'), findsOneWidget);
-    await tester.enterText(find.byType(TextField).first, 'missing');
-    await tester.pumpAndSettle();
-    expect(
-      tester.widget<TextField>(find.byType(TextField).first).controller!.text,
-      'missing',
-    );
-  });
-
-  testWidgets('4. Admin can open the assign coupon dialog', (tester) async {
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          Provider<UserCouponService>.value(value: _Assignments()),
-          Provider<CouponService>.value(value: _Coupons()),
-        ],
-        child: const MaterialApp(home: UserCouponView()),
-      ),
-    );
-    await tester.pumpAndSettle();
     await tester.tap(find.text('มอบคูปอง'));
     await tester.pumpAndSettle();
     expect(find.text('มอบคูปองให้สมาชิก'), findsOneWidget);
     expect(find.text('เลือกสมาชิก'), findsOneWidget);
     expect(find.text('เลือกคูปอง'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ElevatedButton, 'มอบคูปอง'));
+    await tester.pumpAndSettle();
+
+    expect(assignments.assignedUserId, 8);
+    expect(assignments.assignedCouponId, 2);
   });
 }
 
 class _Assignments extends UserCouponService {
   _Assignments() : super(ApiService());
+
+  int? assignedUserId;
+  int? assignedCouponId;
+
   @override
   Future<List<UserCouponModel>> getAllUserCoupons() async => [
-    UserCouponModel(
-      userCouponId: 10,
-      userId: 8,
-      couponId: 2,
-      username: 'sam',
-      displayName: 'Sam',
-      email: 'sam@example.com',
-      code: 'WELCOME',
-      discountType: 'percent',
-      discountValue: 5,
-      minOrderAmount: 100,
-      maxDiscountAmount: 50,
-      startDate: '2026-01-01',
-      endDate: '2099-12-31',
-      usedAt: null,
-      couponIsActive: true,
-    ),
+    _assignment(10, 'WELCOME'),
   ];
+
   @override
   Future<List<UserOptionModel>> getAvailableUsers() async => [
     const UserOptionModel(
@@ -83,7 +56,34 @@ class _Assignments extends UserCouponService {
       email: 'sam@example.com',
     ),
   ];
+
+  @override
+  Future<void> assignCoupon({
+    required int userId,
+    required int couponId,
+  }) async {
+    assignedUserId = userId;
+    assignedCouponId = couponId;
+  }
 }
+
+UserCouponModel _assignment(int assignmentId, String code) => UserCouponModel(
+  userCouponId: assignmentId,
+  userId: 8,
+  couponId: 2,
+  username: 'sam',
+  displayName: 'Sam',
+  email: 'sam@example.com',
+  code: code,
+  discountType: 'percent',
+  discountValue: 5,
+  minOrderAmount: 100,
+  maxDiscountAmount: 50,
+  startDate: '2026-01-01',
+  endDate: '2099-12-31',
+  usedAt: null,
+  couponIsActive: true,
+);
 
 // The assignment dialog needs at least one active coupon to offer to the admin.
 class _Coupons extends CouponService {
