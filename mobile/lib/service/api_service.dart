@@ -29,7 +29,7 @@ class ApiService {
     FlutterSecureStorage? storage,
     SecureStorage? secureStorage,
   }) : client = client ?? http.Client(),
-       storage = secureStorage ?? SecureStorage(storage: storage);
+      storage = secureStorage ?? SecureStorage(storage: storage);
 
   Uri buildUri(String path) {
     final base = ApiConstant.baseUrl.replaceFirst(RegExp(r'/+$'), '');

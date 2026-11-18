@@ -8,4 +8,8 @@ router.post('/register', authController.register);
 // Login
 router.post('/login', authController.login);
 
+// Forgot password (OTP via email)
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;

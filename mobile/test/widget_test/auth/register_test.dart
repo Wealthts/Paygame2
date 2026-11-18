@@ -16,4 +16,17 @@ void main() {
     expect(find.text('กรุณากรอก Username'), findsOneWidget);
     expect(find.text('กรุณากรอก Email'), findsOneWidget);
   });
+
+  testWidgets('register requires accepting terms and conditions', (tester) async {
+    await tester.pumpWidget(withAuthController(const RegisterView()));
+    final submitButton = find.widgetWithText(FilledButton, 'สมัครสมาชิก');
+    await tester.ensureVisible(submitButton);
+    await tester.tap(submitButton);
+    await tester.pump();
+
+    expect(
+      find.text('กรุณายอมรับข้อกำหนดและเงื่อนไขก่อนสมัครสมาชิก'),
+      findsOneWidget,
+    );
+  });
 }

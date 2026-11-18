@@ -8,6 +8,8 @@ abstract final class ApiConstant {
 
   static const String authLogin = '/api/auth/login';
   static const String authRegister = '/api/auth/register';
+  static const String authForgotPassword = '/api/auth/forgot-password';
+  static const String authResetPassword = '/api/auth/reset-password';
 
   static const String games = '/api/games';
   static const String packages = '/api/packages';
