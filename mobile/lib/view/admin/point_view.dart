@@ -83,11 +83,11 @@ class _PointViewContentState extends State<_PointViewContent> {
   String _typeLabel(String type) {
     switch (type) {
       case 'All':
-        return 'All';
+        return 'ทั้งหมด';
       case 'Earn':
-        return 'Earned';
+        return 'ได้รับแต้ม';
       case 'Spend':
-        return 'Spent';
+        return 'ใช้แต้ม';
       default:
         return type;
     }
@@ -127,7 +127,7 @@ class _PointViewContentState extends State<_PointViewContent> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openAddPointsDialog(context),
         icon: const Icon(Icons.add),
-        label: const Text('Add points'),
+        label: const Text('เพิ่มแต้ม'),
       ),
 
       body: Consumer<PointController>(
@@ -153,7 +153,7 @@ class _PointViewContentState extends State<_PointViewContent> {
                   actions: [
                     TextButton(
                       onPressed: controller.loadTransactions,
-                      child: const Text('Try again'),
+                      child: const Text('ลองอีกครั้ง'),
                     ),
                   ],
                 ),
@@ -245,12 +245,12 @@ class _PointViewContentState extends State<_PointViewContent> {
               setState(() {});
             },
             decoration: InputDecoration(
-              hintText: 'Search Transaction ID, User ID, Username ...',
+              hintText: 'ค้นหา Transaction ID, User ID, Username ...',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchController.text.isEmpty
                   ? null
                   : IconButton(
-                      tooltip: 'Clear search',
+                      tooltip: 'ล้างคำค้นหา',
                       onPressed: () {
                         setState(() {
                           _searchController.clear();
@@ -297,8 +297,8 @@ class _PointViewContentState extends State<_PointViewContent> {
             children: [
               Expanded(
                 child: Text(
-                  'Showing $visibleTransactions of '
-                  '$totalTransactions items',
+                  'แสดง $visibleTransactions จาก '
+                  '$totalTransactions รายการ',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -310,7 +310,7 @@ class _PointViewContentState extends State<_PointViewContent> {
                 TextButton.icon(
                   onPressed: _clearFilters,
                   icon: const Icon(Icons.filter_alt_off, size: 17),
-                  label: const Text('Clear filters'),
+                  label: const Text('ล้างตัวกรอง'),
                 ),
             ],
           ),
@@ -332,7 +332,7 @@ class _PointViewContentState extends State<_PointViewContent> {
           SizedBox(height: 90),
           Icon(Icons.stars_outlined, size: 64, color: Colors.grey),
           SizedBox(height: 16),
-          Center(child: Text('No point history yet')),
+          Center(child: Text('ยังไม่มีประวัติแต้ม')),
         ],
       ),
     );
@@ -353,7 +353,7 @@ class _PointViewContentState extends State<_PointViewContent> {
           const SizedBox(height: 12),
           const Center(
             child: Text(
-              'No point history matches your search',
+              'ไม่พบประวัติแต้มที่ตรงกับการค้นหา',
               textAlign: TextAlign.center,
             ),
           ),
@@ -362,7 +362,7 @@ class _PointViewContentState extends State<_PointViewContent> {
             child: TextButton.icon(
               onPressed: _clearFilters,
               icon: const Icon(Icons.refresh),
-              label: const Text('Clear search and filters'),
+              label: const Text('ล้างคำค้นหาและตัวกรอง'),
             ),
           ),
         ],
@@ -395,8 +395,8 @@ class _PointViewContentState extends State<_PointViewContent> {
       SnackBar(
         content: Text(
           success
-              ? 'Points added successfully'
-              : controller.errorMessage ?? 'Failed to add points',
+              ? 'เพิ่มแต้มให้สมาชิกเรียบร้อยแล้ว'
+              : controller.errorMessage ?? 'เพิ่มแต้มไม่สำเร็จ',
         ),
       ),
     );
@@ -426,7 +426,7 @@ class _PointSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Points overview',
+            'ภาพรวมประวัติแต้ม',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 12),
@@ -434,7 +434,7 @@ class _PointSummary extends StatelessWidget {
             children: [
               Expanded(
                 child: _SummaryCard(
-                  title: 'Transactions',
+                  title: 'รายการทั้งหมด',
                   value: '$transactionCount',
                   icon: Icons.receipt_long_outlined,
                 ),
@@ -442,7 +442,7 @@ class _PointSummary extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: _SummaryCard(
-                  title: 'Points earned',
+                  title: 'แต้มที่ได้รับ',
                   value: '$totalEarned',
                   icon: Icons.trending_up,
                 ),
@@ -450,7 +450,7 @@ class _PointSummary extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: _SummaryCard(
-                  title: 'Points spent',
+                  title: 'แต้มที่ใช้',
                   value: '$totalSpent',
                   icon: Icons.trending_down,
                 ),
@@ -538,7 +538,7 @@ class _PointCard extends StatelessWidget {
                 ),
                 Chip(
                   label: Text(
-                    isEarn ? 'Earned' : 'Spent',
+                    isEarn ? 'ได้รับแต้ม' : 'ใช้แต้ม',
                     style: TextStyle(
                       color: isEarn ? Colors.green : Colors.orange,
                     ),
@@ -569,7 +569,7 @@ class _PointCard extends StatelessWidget {
 
             if (transaction.createdAt != null)
               Text(
-                'Date: ${_formatDate(transaction.createdAt!)}',
+                'วันที่: ${_formatDate(transaction.createdAt!)}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
 
@@ -578,7 +578,7 @@ class _PointCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  isAutomatic ? 'From order system' : 'Added by admin',
+                  isAutomatic ? 'รายการจากระบบ Order' : 'รายการจาก Admin',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
 
@@ -586,7 +586,7 @@ class _PointCard extends StatelessWidget {
 
                 Text(
                   '${isEarn ? '+' : ''}'
-                  '${transaction.pointsDelta} points',
+                  '${transaction.pointsDelta} แต้ม',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -637,7 +637,7 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add points to member'),
+      title: const Text('เพิ่มแต้มให้สมาชิก'),
       content: SizedBox(
         width: 400,
         child: Form(
@@ -650,7 +650,7 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: 'User ID',
-                  hintText: 'e.g. 2',
+                  hintText: 'เช่น 2',
                   prefixIcon: Icon(Icons.person_outline),
                   border: OutlineInputBorder(),
                 ),
@@ -658,7 +658,7 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
                   final id = int.tryParse(value?.trim() ?? '');
 
                   if (id == null || id <= 0) {
-                    return 'Please enter a valid User ID';
+                    return 'กรุณากรอก User ID ให้ถูกต้อง';
                   }
 
                   return null;
@@ -671,8 +671,8 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
                 controller: _pointsController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Points',
-                  hintText: 'e.g. 100',
+                  labelText: 'จำนวนแต้ม',
+                  hintText: 'เช่น 100',
                   prefixIcon: Icon(Icons.stars_outlined),
                   border: OutlineInputBorder(),
                 ),
@@ -680,7 +680,7 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
                   final points = int.tryParse(value?.trim() ?? '');
 
                   if (points == null || points <= 0) {
-                    return 'Points must be a whole number greater than 0';
+                    return 'จำนวนแต้มต้องเป็นจำนวนเต็มมากกว่า 0';
                   }
 
                   return null;
@@ -690,8 +690,8 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
               const SizedBox(height: 12),
 
               const Text(
-                'This is saved as an Earn transaction '
-                'with an auto-generated event key.',
+                'ระบบจะบันทึกเป็นรายการ Earn '
+                'และสร้าง Event Key ให้อัตโนมัติ',
                 style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
@@ -701,9 +701,9 @@ class _AddPointsDialogState extends State<_AddPointsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text('ยกเลิก'),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Add points')),
+        FilledButton(onPressed: _submit, child: const Text('เพิ่มแต้ม')),
       ],
     );
   }
@@ -734,7 +734,7 @@ class _PointErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Try again'),
+              label: const Text('ลองอีกครั้ง'),
             ),
           ],
         ),

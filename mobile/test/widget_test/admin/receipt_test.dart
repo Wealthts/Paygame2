@@ -78,23 +78,23 @@ void main() {
     );
 
     expect(find.text('Receipts Management'), findsOneWidget);
-    expect(find.text('All receipts'), findsOneWidget);
-    expect(find.text('2 items'), findsOneWidget);
-    expect(find.text('Showing 2 of 2 items'), findsOneWidget);
+    expect(find.text('ใบเสร็จทั้งหมด'), findsOneWidget);
+    expect(find.text('2 รายการ'), findsOneWidget);
+    expect(find.text('แสดง 2 จาก 2 รายการ'), findsOneWidget);
 
     expect(find.text('RCP_101'), findsOneWidget);
     expect(find.text('RCP_102'), findsOneWidget);
     expect(find.text('Receipt ID: 2'), findsOneWidget);
     expect(find.text('Order ID: 102'), findsOneWidget);
-    expect(find.text('Issued: 04/03/2020 10:30'), findsOneWidget);
-    expect(find.text('View details'), findsNWidgets(2));
+    expect(find.text('วันที่ออกใบเสร็จ: 04/03/2020 10:30'), findsOneWidget);
+    expect(find.text('ดูรายละเอียด'), findsNWidgets(2));
   });
 
   testWidgets('shows empty state when there are no receipts', (tester) async {
     await _pump(tester, _FakeAdminReceiptService([]));
 
-    expect(find.text('0 items'), findsOneWidget);
-    expect(find.text('No receipts yet'), findsOneWidget);
+    expect(find.text('0 รายการ'), findsOneWidget);
+    expect(find.text('ยังไม่มีใบเสร็จรับเงิน'), findsOneWidget);
   });
 
   // Search field + date chips
@@ -112,7 +112,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'rcp_104');
       await tester.pump();
 
-      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 1 จาก 4 รายการ'), findsOneWidget);
       expect(find.text('RCP_104'), findsOneWidget);
       expect(find.text('RCP_101'), findsNothing);
     });
@@ -124,7 +124,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Order ID: 103'), findsOneWidget);
-      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 1 จาก 4 รายการ'), findsOneWidget);
     });
 
     testWidgets('Today / 7 days / 30 days chips narrow the list', (
@@ -132,41 +132,41 @@ void main() {
     ) async {
       await _pump(tester, _FakeAdminReceiptService(receipts));
 
-      await tester.tap(_chip('Today'));
+      await tester.tap(_chip('วันนี้'));
       await tester.pump();
-      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 1 จาก 4 รายการ'), findsOneWidget);
       expect(find.text('RCP_101'), findsOneWidget);
 
-      await tester.tap(_chip('Last 7 days'));
+      await tester.tap(_chip('7 วันที่ผ่านมา'));
       await tester.pump();
-      expect(find.text('Showing 2 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 2 จาก 4 รายการ'), findsOneWidget);
       expect(find.text('RCP_103'), findsNothing);
 
-      await tester.tap(_chip('Last 30 days'));
+      await tester.tap(_chip('30 วันที่ผ่านมา'));
       await tester.pump();
-      expect(find.text('Showing 3 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 3 จาก 4 รายการ'), findsOneWidget);
       expect(find.text('RCP_104'), findsNothing);
 
-      await tester.tap(_chip('All'));
+      await tester.tap(_chip('ทั้งหมด'));
       await tester.pump();
-      expect(find.text('Showing 4 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 4 จาก 4 รายการ'), findsOneWidget);
     });
 
     testWidgets('Clear filters resets search and chip', (tester) async {
       await _pump(tester, _FakeAdminReceiptService(receipts));
 
-      expect(find.text('Clear filters'), findsNothing);
+      expect(find.text('ล้างตัวกรอง'), findsNothing);
 
-      await tester.tap(_chip('Today'));
+      await tester.tap(_chip('วันนี้'));
       await tester.enterText(find.byType(TextField), 'rcp');
       await tester.pump();
-      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 1 จาก 4 รายการ'), findsOneWidget);
 
-      await tester.tap(find.text('Clear filters'));
+      await tester.tap(find.text('ล้างตัวกรอง'));
       await tester.pump();
 
-      expect(find.text('Showing 4 of 4 items'), findsOneWidget);
-      expect(find.text('Clear filters'), findsNothing);
+      expect(find.text('แสดง 4 จาก 4 รายการ'), findsOneWidget);
+      expect(find.text('ล้างตัวกรอง'), findsNothing);
     });
 
     testWidgets('no match shows message and a button to reset', (
@@ -177,12 +177,12 @@ void main() {
       await tester.enterText(find.byType(TextField), 'does-not-exist');
       await tester.pump();
 
-      expect(find.text('No receipts match your filters'), findsOneWidget);
+      expect(find.text('ไม่พบใบเสร็จที่ตรงกับเงื่อนไข'), findsOneWidget);
 
-      await tester.tap(find.text('Clear search and filters'));
+      await tester.tap(find.text('ล้างคำค้นหาและตัวกรอง'));
       await tester.pump();
 
-      expect(find.text('Showing 4 of 4 items'), findsOneWidget);
+      expect(find.text('แสดง 4 จาก 4 รายการ'), findsOneWidget);
     });
   });
 
@@ -198,13 +198,13 @@ void main() {
         ]),
       );
 
-      await tester.tap(find.text('View details'));
+      await tester.tap(find.text('ดูรายละเอียด'));
       await tester.pumpAndSettle();
 
       expect(find.text('Receipt Details'), findsOneWidget);
       expect(find.text('Receipt Number'), findsOneWidget);
       expect(find.text('04/03/2020 10:30'), findsOneWidget);
-      expect(find.textContaining('cannot be edited here'), findsOneWidget);
+      expect(find.textContaining('ไม่สามารถแก้ไขจากหน้านี้ได้'), findsOneWidget);
     });
 
     testWidgets('Close dismisses the dialog', (tester) async {
@@ -217,7 +217,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Receipt Details'), findsOneWidget);
 
-      await tester.tap(find.text('Close'));
+      await tester.tap(find.text('ปิด'));
       await tester.pumpAndSettle();
       expect(find.text('Receipt Details'), findsNothing);
     });
@@ -236,7 +236,7 @@ void main() {
       expect(find.text('Server down'), findsOneWidget);
       expect(find.text('RCP_101'), findsNothing);
 
-      await tester.tap(find.text('Try again'));
+      await tester.tap(find.text('ลองอีกครั้ง'));
       await tester.pumpAndSettle();
 
       expect(service.calls, 2);

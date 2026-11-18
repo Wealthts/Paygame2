@@ -103,11 +103,11 @@ Future<void> _fillAddDialog(
   await tester.tap(find.byType(FloatingActionButton));
   await tester.pumpAndSettle();
   await tester.enterText(find.widgetWithText(TextFormField, 'User ID'), userId);
-  await tester.enterText(find.widgetWithText(TextFormField, 'Points'), points);
+  await tester.enterText(find.widgetWithText(TextFormField, 'จำนวนแต้ม'), points);
 }
 
 Future<void> _submitAddDialog(WidgetTester tester) async {
-  await tester.tap(find.widgetWithText(FilledButton, 'Add points'));
+  await tester.tap(find.widgetWithText(FilledButton, 'เพิ่มแต้ม'));
   await tester.pumpAndSettle();
 }
 
@@ -127,26 +127,26 @@ void main() {
     );
 
     expect(find.text('Points Management'), findsOneWidget);
-    expect(find.text('Points overview'), findsOneWidget);
+    expect(find.text('ภาพรวมประวัติแต้ม'), findsOneWidget);
 
     // 3 transactions, earned 25 + 5 = 30, spent 10 (shown without minus)
     expect(
       find.descendant(
-        of: find.widgetWithText(Card, 'Transactions'),
+        of: find.widgetWithText(Card, 'รายการทั้งหมด'),
         matching: find.text('3'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
-        of: find.widgetWithText(Card, 'Points earned'),
+        of: find.widgetWithText(Card, 'แต้มที่ได้รับ'),
         matching: find.text('30'),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
-        of: find.widgetWithText(Card, 'Points spent'),
+        of: find.widgetWithText(Card, 'แต้มที่ใช้'),
         matching: find.text('10'),
       ),
       findsOneWidget,
@@ -159,15 +159,15 @@ void main() {
     expect(find.text('Transaction #1'), findsOneWidget);
     expect(find.text('test_player'), findsOneWidget);
     expect(find.text('Order ID: 17'), findsOneWidget);
-    expect(find.text('From order system'), findsOneWidget);
-    expect(find.text('+25 points'), findsOneWidget);
-    expect(_inCard('Earned'), findsOneWidget);
+    expect(find.text('รายการจากระบบ Order'), findsOneWidget);
+    expect(find.text('+25 แต้ม'), findsOneWidget);
+    expect(_inCard('ได้รับแต้ม'), findsOneWidget);
 
     expect(find.text('Mocha'), findsOneWidget);
     expect(find.text('User ID: 11'), findsOneWidget);
-    expect(find.text('Added by admin'), findsOneWidget);
-    expect(find.text('-10 points'), findsOneWidget);
-    expect(_inCard('Spent'), findsOneWidget);
+    expect(find.text('รายการจาก Admin'), findsOneWidget);
+    expect(find.text('-10 แต้ม'), findsOneWidget);
+    expect(_inCard('ใช้แต้ม'), findsOneWidget);
   });
 
   testWidgets('falls back to "User #id" when the user has no name', (
@@ -183,7 +183,7 @@ void main() {
   ) async {
     await _pump(tester, _FakeAdminPointService([]));
 
-    expect(find.text('No point history yet'), findsOneWidget);
+    expect(find.text('ยังไม่มีประวัติแต้ม'), findsOneWidget);
   });
 
   // Search field + Earned/Spent chips
@@ -191,20 +191,20 @@ void main() {
     testWidgets('Earned and Spent chips filter by sign', (tester) async {
       await _pump(tester, _FakeAdminPointService([orderEarn, adminSpend]));
 
-      await tester.tap(_chip('Spent'));
+      await tester.tap(_chip('ใช้แต้ม'));
       await tester.pump();
-      expect(find.text('Showing 1 of 2 items'), findsOneWidget);
+      expect(find.text('แสดง 1 จาก 2 รายการ'), findsOneWidget);
       expect(find.text('Transaction #2'), findsOneWidget);
       expect(find.text('Transaction #1'), findsNothing);
 
-      await tester.tap(_chip('Earned'));
+      await tester.tap(_chip('ได้รับแต้ม'));
       await tester.pump();
       expect(find.text('Transaction #1'), findsOneWidget);
       expect(find.text('Transaction #2'), findsNothing);
 
-      await tester.tap(_chip('All'));
+      await tester.tap(_chip('ทั้งหมด'));
       await tester.pump();
-      expect(find.text('Showing 2 of 2 items'), findsOneWidget);
+      expect(find.text('แสดง 2 จาก 2 รายการ'), findsOneWidget);
     });
 
     testWidgets('search matches username, display name and event key', (
@@ -228,15 +228,15 @@ void main() {
     ) async {
       await _pump(tester, _FakeAdminPointService([orderEarn, adminSpend]));
 
-      await tester.tap(_chip('Spent'));
+      await tester.tap(_chip('ใช้แต้ม'));
       await tester.enterText(find.byType(TextField), 'nobody');
       await tester.pump();
-      expect(find.text('No point history matches your search'), findsOneWidget);
+      expect(find.text('ไม่พบประวัติแต้มที่ตรงกับการค้นหา'), findsOneWidget);
 
-      await tester.tap(find.text('Clear search and filters'));
+      await tester.tap(find.text('ล้างคำค้นหาและตัวกรอง'));
       await tester.pump();
-      expect(find.text('Showing 2 of 2 items'), findsOneWidget);
-      expect(find.text('Clear filters'), findsNothing);
+      expect(find.text('แสดง 2 จาก 2 รายการ'), findsOneWidget);
+      expect(find.text('ล้างตัวกรอง'), findsNothing);
     });
   });
 
@@ -251,9 +251,9 @@ void main() {
       await _fillAddDialog(tester, userId: '', points: '-5');
       await _submitAddDialog(tester);
 
-      expect(find.text('Please enter a valid User ID'), findsOneWidget);
+      expect(find.text('กรุณากรอก User ID ให้ถูกต้อง'), findsOneWidget);
       expect(
-        find.text('Points must be a whole number greater than 0'),
+        find.text('จำนวนแต้มต้องเป็นจำนวนเต็มมากกว่า 0'),
         findsOneWidget,
       );
       expect(service.calls, isNot(contains(startsWith('add'))));
@@ -264,10 +264,10 @@ void main() {
       await _pump(tester, service);
 
       await _fillAddDialog(tester, userId: '3', points: '100');
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(find.text('ยกเลิก'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Add points to member'), findsNothing);
+      expect(find.text('เพิ่มแต้มให้สมาชิก'), findsNothing);
       expect(service.calls, ['getAll']);
     });
 
@@ -282,10 +282,10 @@ void main() {
 
       expect(service.calls, ['getAll', 'add:3:100', 'getAll']);
       expect(service.lastEventKey, startsWith('ADMIN_3_'));
-      expect(find.text('Points added successfully'), findsOneWidget);
+      expect(find.text('เพิ่มแต้มให้สมาชิกเรียบร้อยแล้ว'), findsOneWidget);
       expect(find.text('Transaction #99'), findsOneWidget);
-      expect(find.text('+100 points'), findsOneWidget);
-      expect(find.text('Showing 2 of 2 items'), findsOneWidget);
+      expect(find.text('+100 แต้ม'), findsOneWidget);
+      expect(find.text('แสดง 2 จาก 2 รายการ'), findsOneWidget);
     });
 
     testWidgets('API error is shown and the list is unchanged', (tester) async {
@@ -305,7 +305,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Showing 1 of 1 items'), findsOneWidget);
+      expect(find.text('แสดง 1 จาก 1 รายการ'), findsOneWidget);
     });
   });
 
@@ -321,7 +321,7 @@ void main() {
 
       expect(find.text('Server down'), findsOneWidget);
 
-      await tester.tap(find.text('Try again'));
+      await tester.tap(find.text('ลองอีกครั้ง'));
       await tester.pumpAndSettle();
 
       expect(service.calls, ['getAll', 'getAll']);

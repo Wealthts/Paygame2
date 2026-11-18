@@ -67,8 +67,8 @@ void main() {
   testWidgets('shows balance with thousands separator', (tester) async {
     await _pump(tester, _FakePointService(balance: 1250));
 
-    expect(find.text('My Points'), findsOneWidget);
-    expect(find.text('Points balance'), findsOneWidget);
+    expect(find.text('แต้มสะสมของฉัน'), findsOneWidget);
+    expect(find.text('แต้มสะสมคงเหลือ'), findsOneWidget);
     expect(find.text('1,250'), findsOneWidget);
   });
 
@@ -81,9 +81,9 @@ void main() {
       ),
     );
 
-    expect(find.text('Total earned'), findsOneWidget);
+    expect(find.text('ได้รับทั้งหมด'), findsOneWidget);
     expect(find.text('+85'), findsOneWidget);
-    expect(find.text('Total spent'), findsOneWidget);
+    expect(find.text('ใช้ไปทั้งหมด'), findsOneWidget);
     expect(find.text('-15'), findsNWidgets(2)); // summary + history row
   });
 
@@ -95,25 +95,25 @@ void main() {
       _FakePointService(history: [_point(1, 25, orderId: 17), _point(2, -10)]),
     );
 
-    expect(find.text('Point History'), findsOneWidget);
-    expect(find.text('2 items'), findsOneWidget);
+    expect(find.text('ประวัติแต้มสะสม'), findsOneWidget);
+    expect(find.text('2 รายการ'), findsOneWidget);
 
-    expect(find.text('Earned'), findsOneWidget);
+    expect(find.text('ได้รับแต้ม'), findsOneWidget);
     expect(find.text('Order #17'), findsOneWidget);
     expect(find.text('+25'), findsNWidgets(2)); // summary + history row
 
-    expect(find.text('Spent'), findsOneWidget);
-    expect(find.text('General point transaction'), findsOneWidget);
+    expect(find.text('ใช้แต้ม'), findsOneWidget);
+    expect(find.text('รายการแต้มทั่วไป'), findsOneWidget);
     expect(find.text('-10'), findsNWidgets(2)); // summary + history row
   });
 
   testWidgets('shows empty state when there is no history', (tester) async {
     await _pump(tester, _FakePointService(balance: 0));
 
-    expect(find.text('0 items'), findsOneWidget);
-    expect(find.text('No point history yet'), findsOneWidget);
+    expect(find.text('0 รายการ'), findsOneWidget);
+    expect(find.text('ยังไม่มีประวัติแต้มสะสม'), findsOneWidget);
     expect(
-      find.text('Points you earn or spend will appear here.'),
+      find.text('เมื่อคุณได้รับหรือใช้แต้ม รายการจะแสดงที่หน้านี้'),
       findsOneWidget,
     );
   });
@@ -121,8 +121,8 @@ void main() {
   testWidgets('has a shortcut to My Coupons', (tester) async {
     await _pump(tester, _FakePointService());
 
-    expect(find.text('My Coupons'), findsOneWidget);
-    expect(find.byTooltip('Open coupons'), findsOneWidget);
+    expect(find.text('คูปองของฉัน'), findsOneWidget);
+    expect(find.byTooltip('เปิดคูปอง'), findsOneWidget);
   });
 
   group('errors and reload', () {
@@ -136,13 +136,13 @@ void main() {
       );
       await _pump(tester, service);
 
-      expect(find.text('Could not load points'), findsOneWidget);
+      expect(find.text('ไม่สามารถโหลดข้อมูลแต้มสะสมได้'), findsOneWidget);
 
-      await tester.tap(find.text('Try again'));
+      await tester.tap(find.text('ลองอีกครั้ง'));
       await tester.pumpAndSettle();
 
       expect(service.calls, 2);
-      expect(find.text('Could not load points'), findsNothing);
+      expect(find.text('ไม่สามารถโหลดข้อมูลแต้มสะสมได้'), findsNothing);
       expect(find.text('1,250'), findsOneWidget);
     });
 

@@ -118,13 +118,13 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
   String _periodLabel(String period) {
     switch (period) {
       case 'All':
-        return 'All';
+        return 'ทั้งหมด';
       case 'Today':
-        return 'Today';
+        return 'วันนี้';
       case '7d':
-        return 'Last 7 days';
+        return '7 วันที่ผ่านมา';
       case '30d':
-        return 'Last 30 days';
+        return '30 วันที่ผ่านมา';
       default:
         return period;
     }
@@ -178,7 +178,7 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
                   actions: [
                     TextButton(
                       onPressed: controller.loadReceipts,
-                      child: const Text('Try again'),
+                      child: const Text('ลองอีกครั้ง'),
                     ),
                   ],
                 ),
@@ -272,12 +272,12 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
               setState(() {});
             },
             decoration: InputDecoration(
-              hintText: 'Search Receipt ID, Order ID, Receipt Number ...',
+              hintText: 'ค้นหา Receipt ID, Order ID, Receipt Number ...',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchController.text.isEmpty
                   ? null
                   : IconButton(
-                      tooltip: 'Clear search',
+                      tooltip: 'ล้างคำค้นหา',
                       onPressed: () {
                         setState(() {
                           _searchController.clear();
@@ -324,8 +324,8 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
             children: [
               Expanded(
                 child: Text(
-                  'Showing $visibleReceipts of '
-                  '$totalReceipts items',
+                  'แสดง $visibleReceipts จาก '
+                  '$totalReceipts รายการ',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -336,7 +336,7 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
                 TextButton.icon(
                   onPressed: _clearFilters,
                   icon: const Icon(Icons.filter_alt_off, size: 17),
-                  label: const Text('Clear filters'),
+                  label: const Text('ล้างตัวกรอง'),
                 ),
             ],
           ),
@@ -358,7 +358,7 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
           SizedBox(height: 90),
           Icon(Icons.receipt_long_outlined, size: 64, color: Colors.grey),
           SizedBox(height: 16),
-          Center(child: Text('No receipts yet')),
+          Center(child: Text('ยังไม่มีใบเสร็จรับเงิน')),
         ],
       ),
     );
@@ -379,7 +379,7 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
           const SizedBox(height: 12),
           const Center(
             child: Text(
-              'No receipts match your filters',
+              'ไม่พบใบเสร็จที่ตรงกับเงื่อนไข',
               textAlign: TextAlign.center,
             ),
           ),
@@ -388,7 +388,7 @@ class _ReceiptViewContentState extends State<_ReceiptViewContent> {
             child: TextButton.icon(
               onPressed: _clearFilters,
               icon: const Icon(Icons.refresh),
-              label: const Text('Clear search and filters'),
+              label: const Text('ล้างคำค้นหาและตัวกรอง'),
             ),
           ),
         ],
@@ -421,10 +421,10 @@ class _ReceiptSummary extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('All receipts'),
+                    const Text('ใบเสร็จทั้งหมด'),
                     const SizedBox(height: 4),
                     Text(
-                      '$count items',
+                      '$count รายการ',
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -484,7 +484,7 @@ class _ReceiptCard extends StatelessWidget {
               const SizedBox(height: 6),
 
               Text(
-                'Issued: '
+                'วันที่ออกใบเสร็จ: '
                 '${receipt.issuedAt == null ? '-' : _formatDate(receipt.issuedAt!)}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
@@ -496,7 +496,7 @@ class _ReceiptCard extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: onTap,
                   icon: const Icon(Icons.visibility_outlined),
-                  label: const Text('View details'),
+                  label: const Text('ดูรายละเอียด'),
                 ),
               ),
             ],
@@ -540,8 +540,8 @@ void _showReceiptDetails(BuildContext context, ReceiptModel receipt) {
               const Divider(height: 24),
 
               const Text(
-                'This receipt was generated by PayGame '
-                'and cannot be edited here.',
+                'ใบเสร็จนี้ถูกสร้างโดยระบบ PayGame '
+                'จึงไม่สามารถแก้ไขจากหน้านี้ได้',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
@@ -552,7 +552,7 @@ void _showReceiptDetails(BuildContext context, ReceiptModel receipt) {
             onPressed: () {
               Navigator.pop(dialogContext);
             },
-            child: const Text('Close'),
+            child: const Text('ปิด'),
           ),
         ],
       );
@@ -608,7 +608,7 @@ class _ReceiptErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Try again'),
+              label: const Text('ลองอีกครั้ง'),
             ),
           ],
         ),

@@ -12,14 +12,14 @@ class ReceiptService {
     final response = await _apiService.get('$_endpoint/all');
 
     if (response is! Map) {
-      throw const FormatException('Invalid receipt data format');
+      throw const FormatException('รูปแบบข้อมูลใบเสร็จไม่ถูกต้อง');
     }
 
     final data = Map<String, dynamic>.from(response);
     final receiptsJson = data['receipts'];
 
     if (receiptsJson is! List) {
-      throw const FormatException('Receipts not found');
+      throw const FormatException('ไม่พบรายการใบเสร็จ');
     }
 
     return receiptsJson.map((item) {
@@ -31,7 +31,7 @@ class ReceiptService {
     final response = await _apiService.get('$_endpoint/$receiptId');
 
     if (response is! Map) {
-      throw const FormatException('Invalid receipt details format');
+      throw const FormatException('รูปแบบรายละเอียดใบเสร็จไม่ถูกต้อง');
     }
 
     final data = Map<String, dynamic>.from(response);
@@ -39,7 +39,7 @@ class ReceiptService {
     final receiptJson = data['receipt'] ?? data;
 
     if (receiptJson is! Map) {
-      throw const FormatException('Receipt details not found');
+      throw const FormatException('ไม่พบรายละเอียดใบเสร็จ');
     }
 
     return ReceiptModel.fromJson(Map<String, dynamic>.from(receiptJson));
@@ -52,19 +52,19 @@ class ReceiptService {
     final response = await _apiService.get('$_endpoint/my-receipts');
 
     if (response is! Map) {
-      throw const FormatException('Invalid receipt data format');
+      throw const FormatException('รูปแบบข้อมูลใบเสร็จไม่ถูกต้อง');
     }
 
     final data = Map<String, dynamic>.from(response);
     final receiptsJson = data['receipts'];
 
     if (receiptsJson is! List) {
-      throw const FormatException('Receipts not found');
+      throw const FormatException('ไม่พบรายการใบเสร็จ');
     }
 
     return receiptsJson.map((item) {
       if (item is! Map) {
-        throw const FormatException('Invalid receipt data');
+        throw const FormatException('ข้อมูลใบเสร็จไม่ถูกต้อง');
       }
 
       return ReceiptModel.fromJson(Map<String, dynamic>.from(item));

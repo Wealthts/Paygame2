@@ -38,7 +38,7 @@ class _CustomerReceiptHistoryViewState
     try {
       await future;
     } catch (_) {
-      // FutureBuilder shows the error state
+      // FutureBuilder จะแสดงข้อผิดพลาด
     }
   }
 
@@ -52,7 +52,7 @@ class _CustomerReceiptHistoryViewState
       backgroundColor: AppColors.cream,
       appBar: AppBar(
         foregroundColor: AppColors.white,
-        title: const Text('Receipt History'),
+        title: const Text('ประวัติใบเสร็จ'),
       ),
       body: SafeArea(
         child: FutureBuilder<List<ReceiptModel>>(
@@ -92,7 +92,7 @@ class _CustomerReceiptHistoryViewState
                   const SizedBox(height: 22),
 
                   const Text(
-                    'All receipts',
+                    'ใบเสร็จทั้งหมด',
                     style: TextStyle(
                       color: AppColors.ink,
                       fontSize: 20,
@@ -124,7 +124,7 @@ class _CustomerReceiptHistoryViewState
 
                   const Center(
                     child: Text(
-                      'Receipt data from PayGame',
+                      'ข้อมูลใบเสร็จจากระบบ PayGame',
                       style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
                     ),
                   ),
@@ -157,12 +157,12 @@ class _CustomerReceiptHistoryViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Receipts',
+                  'จำนวนใบเสร็จ',
                   style: TextStyle(color: AppColors.inkMuted, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$count items',
+                  '$count รายการ',
                   style: const TextStyle(
                     color: AppColors.ink,
                     fontSize: 22,
@@ -176,7 +176,7 @@ class _CustomerReceiptHistoryViewState
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const Text(
-                'Total',
+                'ยอดรวม',
                 style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
               ),
               const SizedBox(height: 5),
@@ -205,7 +205,7 @@ class _CustomerReceiptHistoryViewState
             const Icon(Icons.cloud_off, color: AppColors.inkMuted, size: 60),
             const SizedBox(height: 16),
             const Text(
-              'Could not load receipt history',
+              'ไม่สามารถโหลดประวัติใบเสร็จได้',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.ink,
@@ -217,7 +217,7 @@ class _CustomerReceiptHistoryViewState
             ElevatedButton.icon(
               onPressed: _retryLoading,
               icon: const Icon(Icons.refresh),
-              label: const Text('Try again'),
+              label: const Text('ลองอีกครั้ง'),
             ),
           ],
         ),
@@ -240,7 +240,7 @@ class _CustomerReceiptHistoryViewState
           ),
           SizedBox(height: 18),
           Text(
-            'No receipts yet',
+            'ยังไม่มีใบเสร็จ',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.ink,
@@ -250,7 +250,7 @@ class _CustomerReceiptHistoryViewState
           ),
           SizedBox(height: 8),
           Text(
-            'Receipts will appear here once they are issued.',
+            'ใบเสร็จจะแสดงที่หน้านี้เมื่อระบบออกใบเสร็จให้แล้ว',
             textAlign: TextAlign.center,
             style: TextStyle(color: AppColors.inkMuted, fontSize: 13),
           ),
@@ -307,15 +307,15 @@ class _ReceiptCard extends StatelessWidget {
 
               const SizedBox(height: 9),
 
-              _infoRow('Game', receipt.gameName ?? '-'),
+              _infoRow('เกม', receipt.gameName ?? '-'),
 
               const SizedBox(height: 9),
 
-              _infoRow('Package', receipt.packageName ?? '-'),
+              _infoRow('แพ็กเกจ', receipt.packageName ?? '-'),
 
               const SizedBox(height: 9),
 
-              _infoRow('Issued at', _formatDate(receipt.issuedAt)),
+              _infoRow('วันที่ออกใบเสร็จ', _formatDate(receipt.issuedAt)),
 
               const Divider(color: AppColors.divider, height: 24),
 
@@ -323,7 +323,7 @@ class _ReceiptCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Amount paid',
+                    'ยอดชำระ',
                     style: TextStyle(color: AppColors.inkMuted, fontSize: 13),
                   ),
                   Text(
@@ -342,7 +342,7 @@ class _ReceiptCard extends StatelessWidget {
               const Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  'Tap to view details',
+                  'แตะเพื่อดูรายละเอียด',
                   style: TextStyle(color: AppColors.inkMuted, fontSize: 11),
                 ),
               ),

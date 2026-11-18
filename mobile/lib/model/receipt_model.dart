@@ -4,7 +4,7 @@ class ReceiptModel {
   final String receiptNumber;
   final DateTime? issuedAt;
 
-  // Extra fields for customer screens
+  // ข้อมูลเพิ่มเติมสำหรับหน้าลูกค้า
   final String? gameName;
   final String? packageName;
   final double? totalAmount;

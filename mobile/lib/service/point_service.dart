@@ -12,14 +12,14 @@ class PointService {
     final response = await _apiService.get('$_endpoint/all');
 
     if (response is! Map) {
-      throw const FormatException('Invalid point history format');
+      throw const FormatException('รูปแบบข้อมูลประวัติแต้มไม่ถูกต้อง');
     }
 
     final data = Map<String, dynamic>.from(response);
     final transactions = data['transactions'];
 
     if (transactions is! List) {
-      throw const FormatException('Point history not found');
+      throw const FormatException('ไม่พบรายการประวัติแต้ม');
     }
 
     return transactions.map((item) {
@@ -34,13 +34,13 @@ class PointService {
     final response = await _apiService.get('$_endpoint/my-points');
 
     if (response is! Map || response['total_points'] == null) {
-      throw const FormatException('Invalid points balance format');
+      throw const FormatException('รูปแบบข้อมูลยอดแต้มไม่ถูกต้อง');
     }
 
     final totalPoints = int.tryParse(response['total_points'].toString());
 
     if (totalPoints == null) {
-      throw const FormatException('Could not read points balance');
+      throw const FormatException('ไม่สามารถอ่านยอดแต้มได้');
     }
 
     return totalPoints;
@@ -53,14 +53,14 @@ class PointService {
     final response = await _apiService.get('$_endpoint/history');
 
     if (response is! Map || response['history'] is! List) {
-      throw const FormatException('Invalid point history format');
+      throw const FormatException('รูปแบบประวัติแต้มไม่ถูกต้อง');
     }
 
     final history = response['history'] as List;
 
     return history.map((item) {
       if (item is! Map) {
-        throw const FormatException('Invalid point history data');
+        throw const FormatException('ข้อมูลประวัติแต้มไม่ถูกต้อง');
       }
 
       return PointModel.fromJson(Map<String, dynamic>.from(item));
