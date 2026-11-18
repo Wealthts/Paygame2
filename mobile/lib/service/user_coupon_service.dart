@@ -56,6 +56,13 @@ class UserCouponService {
     }).toList();
   }
 
+  Future<void> claimCouponByCode(String code) async {
+    await api.post(
+      '/api/user-coupons/claim',
+      body: {'code': code.trim().toUpperCase()},
+    );
+  }
+
   // Assign coupon to member
   Future<void> assignCoupon({
     required int userId,

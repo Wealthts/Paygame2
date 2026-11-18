@@ -14,14 +14,18 @@ class UserDetailsController extends ChangeNotifier {
   String? errorMessage;
 
   Future<void> loadDetails(int userId) async {
-    isLoading = true;
+    if (isLoading) return;
+    final hasExistingDetails = details != null;
+    isLoading = !hasExistingDetails;
     errorMessage = null;
     notifyListeners();
 
     try {
       details = await userService.getUserDetails(userId);
     } catch (e) {
-      errorMessage = e.toString();
+      if (!hasExistingDetails) {
+        errorMessage = e.toString();
+      }
     } finally {
       isLoading = false;
       notifyListeners();
