@@ -16,7 +16,15 @@ class AuthService {
     required String password,
     required String email,
     required String displayName,
+    required bool acceptedTerms,
   }) async {
+    if (!acceptedTerms) {
+      throw const ApiException(
+        statusCode: 400,
+        message: 'กรุณายอมรับข้อกำหนดและเงื่อนไขก่อนสมัครสมาชิก',
+      );
+    }
+
     final cleanUsername = username.trim();
     final cleanEmail = email.trim().toLowerCase();
     final cleanDisplayName = displayName.trim();
@@ -59,6 +67,7 @@ class AuthService {
         'password': password,
         'email': cleanEmail,
         'display_name': cleanDisplayName,
+        'accepted_terms': true,
       },
     );
 
@@ -77,6 +86,57 @@ class AuthService {
         message: 'ไม่พบข้อมูลบัญชีที่สมัคร',
       );
     }
+  }
+
+  // ========================================
+  // Forgot Password (OTP via email)
+  // ========================================
+  Future<void> requestPasswordReset({required String email}) async {
+    final cleanEmail = email.trim().toLowerCase();
+
+    final emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+    if (!emailPattern.hasMatch(cleanEmail)) {
+      throw const ApiException(
+        statusCode: 400,
+        message: 'รูปแบบ Email ไม่ถูกต้อง',
+      );
+    }
+
+    await api.post(
+      ApiConstant.authForgotPassword,
+      requiresAuth: false,
+      body: {'email': cleanEmail},
+    );
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    if (!RegExp(r'^\d{6}$').hasMatch(otp.trim())) {
+      throw const ApiException(
+        statusCode: 400,
+        message: 'รหัส OTP ต้องเป็นตัวเลข 6 หลัก',
+      );
+    }
+
+    if (newPassword.length < 8 || newPassword.length > 128) {
+      throw const ApiException(
+        statusCode: 400,
+        message: 'รหัสผ่านต้องมีความยาว 8–128 ตัวอักษร',
+      );
+    }
+
+    await api.post(
+      ApiConstant.authResetPassword,
+      requiresAuth: false,
+      body: {
+        'email': email.trim().toLowerCase(),
+        'otp': otp.trim(),
+        'new_password': newPassword,
+      },
+    );
   }
 
   // ========================================

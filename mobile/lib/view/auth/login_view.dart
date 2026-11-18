@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:mobile/controller/auth_controller.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:mobile/core/validator.dart';
+import 'package:mobile/view/auth/forget_view.dart';
 import 'package:mobile/view/auth/register_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -46,6 +47,16 @@ class _LoginViewState extends State<LoginView> {
     if (!mounted || registered != true) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ')),
+    );
+  }
+
+  Future<void> _openForgotPassword() async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(builder: (_) => const ForgetView()),
+    );
+    if (!mounted || changed != true) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('เปลี่ยนรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบ')),
     );
   }
 
@@ -148,6 +159,14 @@ class _LoginViewState extends State<LoginView> {
                           validator: (value) => value == null || value.isEmpty
                               ? 'กรุณากรอกรหัสผ่าน'
                               : null,
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed:
+                                auth.isLoading ? null : _openForgotPassword,
+                            child: const Text('ลืมรหัสผ่าน?'),
+                          ),
                         ),
                         if (auth.errorMessage != null) ...[
                           const SizedBox(height: 16),
