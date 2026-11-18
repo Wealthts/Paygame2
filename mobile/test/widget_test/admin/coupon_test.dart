@@ -11,8 +11,8 @@ void main() {
   testWidgets('1. Admin coupon screen lists coupons and filters by search', (
     tester,
   ) async {
-    final service = _Coupons()
-      ..coupons = [_coupon(1, 'SAVE10', true), _coupon(2, 'OLD20', false)];
+    final service = _Coupons();
+    service.coupons = [_coupon(1, 'SAVE10', true), _coupon(2, 'OLD20', false)];
     await tester.pumpWidget(
       Provider<CouponService>.value(
         value: service,
@@ -32,23 +32,24 @@ void main() {
   });
 
   // Opening the form without a code should show the form's validation message.
-  testWidgets('2. Admin can open create coupon form and see validation feedback', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      Provider<CouponService>.value(
-        value: _Coupons(),
-        child: const MaterialApp(home: CouponView()),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('เพิ่มคูปอง'));
-    await tester.pumpAndSettle();
-    expect(find.text('เพิ่มคูปอง'), findsNWidgets(2));
-    await tester.tap(find.text('บันทึก'));
-    await tester.pumpAndSettle();
-    expect(find.text('กรุณากรอกรหัสคูปอง'), findsOneWidget);
-  });
+  testWidgets(
+    '2. Admin can open create coupon form and see validation feedback',
+    (tester) async {
+      await tester.pumpWidget(
+        Provider<CouponService>.value(
+          value: _Coupons(),
+          child: const MaterialApp(home: CouponView()),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('เพิ่มคูปอง'));
+      await tester.pumpAndSettle();
+      expect(find.text('เพิ่มคูปอง'), findsNWidgets(2));
+      await tester.tap(find.text('บันทึก'));
+      await tester.pumpAndSettle();
+      expect(find.text('กรุณากรอกรหัสคูปอง'), findsOneWidget);
+    },
+  );
 }
 
 CouponModel _coupon(int id, String code, bool active) => CouponModel(

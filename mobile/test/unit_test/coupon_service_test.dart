@@ -4,18 +4,18 @@ import 'package:mobile/service/coupon_service.dart';
 
 void main() {
   test('CouponService reads coupons and checks the response format', () async {
-    final api = _CouponApi()
-      ..getResponse = {
-        'coupons': [
-          {
-            'coupon_id': 2,
-            'code': 'SAVE',
-            'discount_type': 'fixed',
-            'discount_value': 10,
-            'is_active': 1,
-          },
-        ],
-      };
+    final api = _CouponApi();
+    api.getResponse = {
+      'coupons': [
+        {
+          'coupon_id': 2,
+          'code': 'SAVE',
+          'discount_type': 'fixed',
+          'discount_value': 10,
+          'is_active': 1,
+        },
+      ],
+    };
 
     final coupons = await CouponService(api).getAllCoupons();
     expect(api.lastPath, '/api/admin/coupons/all');

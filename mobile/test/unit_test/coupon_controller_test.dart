@@ -6,8 +6,8 @@ import 'package:mobile/service/coupon_service.dart';
 
 void main() {
   test('CouponController loads coupons and counts active ones', () async {
-    final service = _FakeCouponService()
-      ..coupons = [_coupon(1, true), _coupon(2, false)];
+    final service = _FakeCouponService();
+    service.coupons = [_coupon(1, true), _coupon(2, false)];
     final controller = CouponController(service);
 
     await controller.loadCoupons();
@@ -39,8 +39,8 @@ void main() {
   test(
     'CouponController keeps an error message when loading or saving fails',
     () async {
-      final service = _FakeCouponService()
-        ..loadError = StateError('load failed');
+      final service = _FakeCouponService();
+      service.loadError = StateError('load failed');
       final controller = CouponController(service);
 
       await controller.loadCoupons();
