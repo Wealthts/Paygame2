@@ -1,50 +1,58 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
+
 import 'package:mobile/model/receipt_model.dart';
 import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/receipt_service.dart';
 import 'package:mobile/view/admin/receipt_view.dart';
 
-// shortcut: a receipt issued 1s ago can fall on yesterday if the test runs right at midnight.
-final _todayReceipt = ReceiptModel(
-  receiptId: 5,
-  orderId: 17,
-  receiptNumber: 'PG-TEST-0005',
-  issuedAt: DateTime.now().subtract(const Duration(seconds: 1)),
-);
+import '../../support/theme_widget_test_helper.dart';
 
-final _oldReceipt = ReceiptModel(
-  receiptId: 6,
-  orderId: 18,
-  receiptNumber: 'PG-OLD-0006',
-  issuedAt: DateTime(2020, 3, 4, 10, 30),
-);
+// Widget tests for the admin Receipts Management page.
+// The fake service keeps receipts in memory and records every call in [calls].
 
+ReceiptModel _receipt(int id, {required DateTime issuedAt, int? orderId}) =>
+    ReceiptModel(
+      receiptId: id,
+      orderId: orderId ?? 100 + id,
+      receiptNumber: 'RCP_${orderId ?? 100 + id}',
+      issuedAt: issuedAt,
+    );
+
+// shortcut: "now" receipts can land on yesterday if the test runs exactly at midnight.
+final _now = DateTime.now().subtract(const Duration(seconds: 1));
+final _fiveDaysAgo = DateTime.now().subtract(const Duration(days: 5));
+final _twentyDaysAgo = DateTime.now().subtract(const Duration(days: 20));
+final _longAgo = DateTime(2020, 3, 4, 10, 30);
+
+/// Fake ReceiptService.
+/// - [calls]: number of times getAllReceipts was called.
+/// - [failOnCalls]: call numbers (1-based) that throw an ApiException.
 class _FakeAdminReceiptService extends ReceiptService {
-  _FakeAdminReceiptService({this.receipts = const [], this.failTimes = 0})
+  _FakeAdminReceiptService(this.receipts, {this.failOnCalls = const {}})
     : super(ApiService());
 
   final List<ReceiptModel> receipts;
-  int failTimes;
+  final Set<int> failOnCalls;
   int calls = 0;
 
   @override
   Future<List<ReceiptModel>> getAllReceipts() async {
     calls++;
-    if (failTimes > 0) {
-      failTimes--;
+    if (failOnCalls.contains(calls)) {
       throw const ApiException(statusCode: 500, message: 'Server down');
     }
-    return receipts;
+    return List.of(receipts);
   }
 }
 
-Future<void> _pumpView(WidgetTester tester, ReceiptService service) async {
-  // Tall surface so every card in the lazy ListView is built and tappable.
-  tester.view.physicalSize = const Size(800, 1600);
+/// Opens ReceiptView with the fake service (tall screen so every card is built).
+Future<void> _pump(WidgetTester tester, _FakeAdminReceiptService service) async {
+  tester.view.physicalSize = const Size(900, 2400);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
+
   await tester.pumpWidget(
     Provider<ReceiptService>.value(
       value: service,
@@ -54,101 +62,215 @@ Future<void> _pumpView(WidgetTester tester, ReceiptService service) async {
   await tester.pumpAndSettle();
 }
 
+Finder _chip(String label) => find.widgetWithText(ChoiceChip, label);
+
 void main() {
-  testWidgets('admin receipts lists every receipt with summary count', (
-    tester,
-  ) async {
-    await _pumpView(
+  // Existing check: app theme contract
+  testPayGameThemeContract('Admin receipt management');
+
+  testWidgets('shows summary and a card per receipt', (tester) async {
+    await _pump(
       tester,
-      _FakeAdminReceiptService(receipts: [_todayReceipt, _oldReceipt]),
+      _FakeAdminReceiptService([
+        _receipt(1, issuedAt: _now),
+        _receipt(2, issuedAt: _longAgo),
+      ]),
     );
 
     expect(find.text('Receipts Management'), findsOneWidget);
+    expect(find.text('All receipts'), findsOneWidget);
     expect(find.text('2 items'), findsOneWidget);
     expect(find.text('Showing 2 of 2 items'), findsOneWidget);
-    expect(find.text('PG-TEST-0005'), findsOneWidget);
-    expect(find.text('PG-OLD-0006'), findsOneWidget);
-    expect(find.text('Order ID: 18'), findsOneWidget);
+
+    expect(find.text('RCP_101'), findsOneWidget);
+    expect(find.text('RCP_102'), findsOneWidget);
+    expect(find.text('Receipt ID: 2'), findsOneWidget);
+    expect(find.text('Order ID: 102'), findsOneWidget);
+    expect(find.text('Issued: 04/03/2020 10:30'), findsOneWidget);
+    expect(find.text('View details'), findsNWidgets(2));
   });
 
-  testWidgets('admin receipts search filters and can be cleared', (
-    tester,
-  ) async {
-    await _pumpView(
-      tester,
-      _FakeAdminReceiptService(receipts: [_todayReceipt, _oldReceipt]),
-    );
-
-    await tester.enterText(find.byType(TextField), 'pg-old');
-    await tester.pump();
-
-    expect(find.text('Showing 1 of 2 items'), findsOneWidget);
-    expect(find.text('PG-OLD-0006'), findsOneWidget);
-    expect(find.text('PG-TEST-0005'), findsNothing);
-
-    await tester.enterText(find.byType(TextField), 'no-such-receipt');
-    await tester.pump();
-    expect(find.text('No receipts match your filters'), findsOneWidget);
-
-    await tester.tap(find.text('Clear search and filters'));
-    await tester.pump();
-    expect(find.text('Showing 2 of 2 items'), findsOneWidget);
-  });
-
-  testWidgets('admin receipts "today" filter hides old receipts', (
-    tester,
-  ) async {
-    await _pumpView(
-      tester,
-      _FakeAdminReceiptService(receipts: [_todayReceipt, _oldReceipt]),
-    );
-
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Today'));
-    await tester.pump();
-
-    expect(find.text('Showing 1 of 2 items'), findsOneWidget);
-    expect(find.text('PG-TEST-0005'), findsOneWidget);
-    expect(find.text('PG-OLD-0006'), findsNothing);
-    expect(find.text('Clear filters'), findsOneWidget);
-  });
-
-  testWidgets('admin receipt card opens and closes the details dialog', (
-    tester,
-  ) async {
-    await _pumpView(tester, _FakeAdminReceiptService(receipts: [_oldReceipt]));
-
-    await tester.tap(find.text('View details'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Receipt Details'), findsOneWidget);
-    expect(find.text('04/03/2020 10:30'), findsOneWidget);
-
-    await tester.tap(find.text('Close'));
-    await tester.pumpAndSettle();
-    expect(find.text('Receipt Details'), findsNothing);
-  });
-
-  testWidgets('admin receipts shows empty state', (tester) async {
-    await _pumpView(tester, _FakeAdminReceiptService());
+  testWidgets('shows empty state when there are no receipts', (tester) async {
+    await _pump(tester, _FakeAdminReceiptService([]));
 
     expect(find.text('0 items'), findsOneWidget);
     expect(find.text('No receipts yet'), findsOneWidget);
   });
 
-  testWidgets('admin receipts shows API error and retries', (tester) async {
-    final service = _FakeAdminReceiptService(
-      receipts: [_oldReceipt],
-      failTimes: 1,
-    );
-    await _pumpView(tester, service);
+  // Search field + date chips
+  group('filtering', () {
+    final receipts = [
+      _receipt(1, issuedAt: _now),
+      _receipt(2, issuedAt: _fiveDaysAgo),
+      _receipt(3, issuedAt: _twentyDaysAgo),
+      _receipt(4, issuedAt: _longAgo),
+    ];
 
-    expect(find.text('Server down'), findsOneWidget);
+    testWidgets('search matches receipt number', (tester) async {
+      await _pump(tester, _FakeAdminReceiptService(receipts));
 
-    await tester.tap(find.text('Try again'));
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'rcp_104');
+      await tester.pump();
 
-    expect(service.calls, 2);
-    expect(find.text('Server down'), findsNothing);
-    expect(find.text('PG-OLD-0006'), findsOneWidget);
+      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+      expect(find.text('RCP_104'), findsOneWidget);
+      expect(find.text('RCP_101'), findsNothing);
+    });
+
+    testWidgets('search matches order id', (tester) async {
+      await _pump(tester, _FakeAdminReceiptService(receipts));
+
+      await tester.enterText(find.byType(TextField), '103');
+      await tester.pump();
+
+      expect(find.text('Order ID: 103'), findsOneWidget);
+      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+    });
+
+    testWidgets('Today / 7 days / 30 days chips narrow the list', (
+      tester,
+    ) async {
+      await _pump(tester, _FakeAdminReceiptService(receipts));
+
+      await tester.tap(_chip('Today'));
+      await tester.pump();
+      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+      expect(find.text('RCP_101'), findsOneWidget);
+
+      await tester.tap(_chip('Last 7 days'));
+      await tester.pump();
+      expect(find.text('Showing 2 of 4 items'), findsOneWidget);
+      expect(find.text('RCP_103'), findsNothing);
+
+      await tester.tap(_chip('Last 30 days'));
+      await tester.pump();
+      expect(find.text('Showing 3 of 4 items'), findsOneWidget);
+      expect(find.text('RCP_104'), findsNothing);
+
+      await tester.tap(_chip('All'));
+      await tester.pump();
+      expect(find.text('Showing 4 of 4 items'), findsOneWidget);
+    });
+
+    testWidgets('Clear filters resets search and chip', (tester) async {
+      await _pump(tester, _FakeAdminReceiptService(receipts));
+
+      expect(find.text('Clear filters'), findsNothing);
+
+      await tester.tap(_chip('Today'));
+      await tester.enterText(find.byType(TextField), 'rcp');
+      await tester.pump();
+      expect(find.text('Showing 1 of 4 items'), findsOneWidget);
+
+      await tester.tap(find.text('Clear filters'));
+      await tester.pump();
+
+      expect(find.text('Showing 4 of 4 items'), findsOneWidget);
+      expect(find.text('Clear filters'), findsNothing);
+    });
+
+    testWidgets('no match shows message and a button to reset', (
+      tester,
+    ) async {
+      await _pump(tester, _FakeAdminReceiptService(receipts));
+
+      await tester.enterText(find.byType(TextField), 'does-not-exist');
+      await tester.pump();
+
+      expect(find.text('No receipts match your filters'), findsOneWidget);
+
+      await tester.tap(find.text('Clear search and filters'));
+      await tester.pump();
+
+      expect(find.text('Showing 4 of 4 items'), findsOneWidget);
+    });
+  });
+
+  // Details dialog (read-only)
+  group('details dialog', () {
+    testWidgets('opens from the card and shows receipt fields', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        _FakeAdminReceiptService([
+          _receipt(7, orderId: 55, issuedAt: _longAgo),
+        ]),
+      );
+
+      await tester.tap(find.text('View details'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Receipt Details'), findsOneWidget);
+      expect(find.text('Receipt Number'), findsOneWidget);
+      expect(find.text('04/03/2020 10:30'), findsOneWidget);
+      expect(find.textContaining('cannot be edited here'), findsOneWidget);
+    });
+
+    testWidgets('Close dismisses the dialog', (tester) async {
+      await _pump(
+        tester,
+        _FakeAdminReceiptService([_receipt(1, issuedAt: _longAgo)]),
+      );
+
+      await tester.tap(find.text('RCP_101'));
+      await tester.pumpAndSettle();
+      expect(find.text('Receipt Details'), findsOneWidget);
+
+      await tester.tap(find.text('Close'));
+      await tester.pumpAndSettle();
+      expect(find.text('Receipt Details'), findsNothing);
+    });
+  });
+
+  // Loading errors, retry and refresh
+  group('errors and reload', () {
+    testWidgets('first load error shows message and Try again reloads', (
+      tester,
+    ) async {
+      final service = _FakeAdminReceiptService([
+        _receipt(1, issuedAt: _longAgo),
+      ], failOnCalls: {1});
+      await _pump(tester, service);
+
+      expect(find.text('Server down'), findsOneWidget);
+      expect(find.text('RCP_101'), findsNothing);
+
+      await tester.tap(find.text('Try again'));
+      await tester.pumpAndSettle();
+
+      expect(service.calls, 2);
+      expect(find.text('Server down'), findsNothing);
+      expect(find.text('RCP_101'), findsOneWidget);
+    });
+
+    testWidgets('Refresh button reloads receipts', (tester) async {
+      final service = _FakeAdminReceiptService([
+        _receipt(1, issuedAt: _longAgo),
+      ]);
+      await _pump(tester, service);
+      expect(service.calls, 1);
+
+      await tester.tap(find.byTooltip('Refresh'));
+      await tester.pumpAndSettle();
+
+      expect(service.calls, 2);
+    });
+
+    testWidgets('refresh error keeps old list and shows a banner', (
+      tester,
+    ) async {
+      final service = _FakeAdminReceiptService([
+        _receipt(1, issuedAt: _longAgo),
+      ], failOnCalls: {2});
+      await _pump(tester, service);
+
+      await tester.tap(find.byTooltip('Refresh'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MaterialBanner), findsOneWidget);
+      expect(find.text('Server down'), findsOneWidget);
+      expect(find.text('RCP_101'), findsOneWidget);
+    });
   });
 }
