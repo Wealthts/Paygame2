@@ -12,6 +12,8 @@ import 'package:mobile/view/customer/order_history_view.dart';
 import 'package:mobile/view/customer/package_view.dart';
 import 'package:mobile/view/customer/point_view.dart';
 import 'package:mobile/view/customer/user_view.dart';
+import 'package:mobile/view/customer/payment_history_view.dart';
+import 'package:mobile/view/customer/receipt_history_view.dart';
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -101,6 +103,27 @@ class _HomePageViewState extends State<HomePageView> {
           ],
         ),
         actions: [
+
+          IconButton(
+            tooltip: 'ประวัติใบเสร็จ',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const CustomerReceiptHistoryView(),
+              ),
+            ),
+            icon: const Icon(Icons.receipt_outlined),
+          ),
+          SizedBox(width: 10),
+          IconButton(
+            tooltip: 'ประวัติจ่ายเเงิน',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const PaymentHistoryView(),
+              ),
+            ),
+            icon: const Icon(Icons.receipt_long_outlined),
+          ),
+          SizedBox(width: 10),
           IconButton(
             tooltip: 'คูปองของฉัน',
             onPressed: () => Navigator.of(context).push(
@@ -110,6 +133,8 @@ class _HomePageViewState extends State<HomePageView> {
             ),
             icon: const Icon(Icons.confirmation_number_outlined),
           ),
+
+          SizedBox(width: 50),
           IconButton(
             tooltip: 'ออกจากระบบ',
             onPressed: () => context.read<AuthController>().logout(),

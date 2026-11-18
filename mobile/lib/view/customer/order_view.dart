@@ -32,6 +32,7 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
   final _formKey = GlobalKey<FormState>();
   final _playerUidController = TextEditingController();
   final _serverCodeController = TextEditingController();
+  final _couponCodeController = TextEditingController();
 
   late Future<List<CustomerCouponModel>> _couponsFuture;
   late Future<int> _pointsFuture;
@@ -43,6 +44,7 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
   int? _selectedCouponId;
   bool _isSubmitting = false;
   String? _errorMessage;
+  String? _couponCodeError;
 
   int? _createdOrderId;
   double _createdTotal = 0;
@@ -64,6 +66,7 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
   void dispose() {
     _playerUidController.dispose();
     _serverCodeController.dispose();
+    _couponCodeController.dispose();
     _spentPointsController.dispose();
     super.dispose();
   }
@@ -529,17 +532,6 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
         final coupons = snapshot.data ?? [];
         final eligibleCoupons = _getEligibleCoupons(coupons);
 
-        if (eligibleCoupons.isEmpty) {
-          final hasCoupons = coupons.isNotEmpty;
-
-          return _couponMessage(
-            icon: Icons.local_offer_outlined,
-            message: hasCoupons
-                ? 'ไม่มีคูปองที่เข้าเงื่อนไขยอดซื้อของแพ็กเกจนี้'
-                : 'คุณยังไม่มีคูปองที่สามารถใช้ได้',
-          );
-        }
-
         final selectedCoupon = _findSelectedCoupon(eligibleCoupons);
         final selectedId = selectedCoupon?.couponId;
 
@@ -558,7 +550,7 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
                   Icon(Icons.local_offer, color: AppColors.goldLight),
                   SizedBox(width: 9),
                   Text(
-                    'เลือกคูปองที่ต้องการใช้',
+                    'กรอกโค้ดหรือเลือกคูปองที่ต้องการใช้',
                     style: TextStyle(
                       color: AppColors.ink,
                       fontWeight: FontWeight.bold,
@@ -569,80 +561,136 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
 
               const SizedBox(height: 14),
 
-              DropdownButtonFormField<int>(
-                initialValue: selectedId,
-                isExpanded: true,
-                dropdownColor: AppColors.creamDeep,
-                decoration: _inputDecoration(
-                  hint: 'เลือกคูปอง',
-                  icon: Icons.confirmation_number_outlined,
-                ),
-                items: [
-                  const DropdownMenuItem<int>(
-                    value: null,
-                    child: Text(
-                      'ไม่ใช้คูปอง',
-                      style: TextStyle(color: AppColors.ink),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _couponCodeController,
+                      enabled: !_isSubmitting,
+                      textCapitalization: TextCapitalization.characters,
+                      decoration: _inputDecoration(
+                        hint: 'กรอกโค้ดคูปองของคุณ',
+                        icon: Icons.confirmation_number_outlined,
+                      ),
+                      onSubmitted: (_) => _applyCouponCode(eligibleCoupons),
                     ),
                   ),
-                  ...eligibleCoupons.map(
-                    (coupon) => DropdownMenuItem<int>(
-                      value: coupon.couponId,
-                      child: Text(
-                        '${coupon.code} - ลด ${coupon.discountLabel}',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: AppColors.ink),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    height: 54,
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting
+                          ? null
+                          : () => _applyCouponCode(eligibleCoupons),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.red,
+                        foregroundColor: AppColors.white,
                       ),
+                      child: const Text('ใช้โค้ด'),
                     ),
                   ),
                 ],
-                onChanged: _isSubmitting
-                    ? null
-                    : (value) {
-                        CustomerCouponModel? coupon;
-
-                        if (value != null) {
-                          coupon = eligibleCoupons.firstWhere(
-                            (item) => item.couponId == value,
-                          );
-                        }
-
-                        final couponDiscount = coupon == null
-                            ? 0.0
-                            : _calculateCouponDiscount(coupon);
-
-                        final amountAfterCoupon = math.max(
-                          0.0,
-                          widget.package.price - couponDiscount,
-                        );
-
-                        final maxPointsByPrice = math.max(
-                          0,
-                          (amountAfterCoupon * 10).floor(),
-                        );
-
-                        final availableBalance =
-                            _pointBalance ?? maxPointsByPrice;
-
-                        final maxAllowedPoints = math.min(
-                          availableBalance,
-                          maxPointsByPrice,
-                        );
-
-                        final nextPoints = math.min(
-                          _selectedSpentPoints,
-                          maxAllowedPoints,
-                        );
-
-                        setState(() {
-                          _selectedCouponId = value;
-                          _selectedCouponDiscount = couponDiscount;
-                          _selectedSpentPoints = nextPoints;
-                          _spentPointsController.text = nextPoints.toString();
-                          _errorMessage = null;
-                        });
-                      },
               ),
+              if (_couponCodeError != null) ...[
+                const SizedBox(height: 6),
+                Text(
+                  _couponCodeError!,
+                  style: const TextStyle(color: AppColors.danger, fontSize: 12),
+                ),
+              ],
+
+              if (eligibleCoupons.isEmpty) ...[
+                const SizedBox(height: 10),
+                Text(
+                  coupons.isEmpty
+                      ? 'คูปองที่กรอกต้องเป็นคูปองที่ได้รับและยังใช้งานได้'
+                      : 'ไม่มีคูปองที่เข้าเงื่อนไขยอดซื้อของแพ็กเกจนี้',
+                  style: const TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 12,
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 14),
+
+                DropdownButtonFormField<int>(
+                  initialValue: selectedId,
+                  isExpanded: true,
+                  dropdownColor: AppColors.creamDeep,
+                  decoration: _inputDecoration(
+                    hint: 'เลือกคูปอง',
+                    icon: Icons.confirmation_number_outlined,
+                  ),
+                  items: [
+                    const DropdownMenuItem<int>(
+                      value: null,
+                      child: Text(
+                        'ไม่ใช้คูปอง',
+                        style: TextStyle(color: AppColors.ink),
+                      ),
+                    ),
+                    ...eligibleCoupons.map(
+                      (coupon) => DropdownMenuItem<int>(
+                        value: coupon.couponId,
+                        child: Text(
+                          '${coupon.code} - ลด ${coupon.discountLabel}',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: AppColors.ink),
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: _isSubmitting
+                      ? null
+                      : (value) {
+                          CustomerCouponModel? coupon;
+
+                          if (value != null) {
+                            coupon = eligibleCoupons.firstWhere(
+                              (item) => item.couponId == value,
+                            );
+                          }
+
+                          final couponDiscount = coupon == null
+                              ? 0.0
+                              : _calculateCouponDiscount(coupon);
+
+                          final amountAfterCoupon = math.max(
+                            0.0,
+                            widget.package.price - couponDiscount,
+                          );
+
+                          final maxPointsByPrice = math.max(
+                            0,
+                            (amountAfterCoupon * 10).floor(),
+                          );
+
+                          final availableBalance =
+                              _pointBalance ?? maxPointsByPrice;
+
+                          final maxAllowedPoints = math.min(
+                            availableBalance,
+                            maxPointsByPrice,
+                          );
+
+                          final nextPoints = math.min(
+                            _selectedSpentPoints,
+                            maxAllowedPoints,
+                          );
+
+                          setState(() {
+                            _selectedCouponId = value;
+                            _selectedCouponDiscount = couponDiscount;
+                            _couponCodeError = null;
+                            _couponCodeController.text = coupon?.code ?? '';
+                            _selectedSpentPoints = nextPoints;
+                            _spentPointsController.text = nextPoints.toString();
+                            _errorMessage = null;
+                          });
+                        },
+                ),
+              ],
 
               if (selectedCoupon != null) ...[
                 const SizedBox(height: 16),
@@ -653,6 +701,58 @@ class _CustomerOrderViewState extends State<CustomerOrderView> {
         );
       },
     );
+  }
+
+  void _applyCouponCode(List<CustomerCouponModel> eligibleCoupons) {
+    final code = _couponCodeController.text.trim().toUpperCase();
+    CustomerCouponModel? coupon;
+    for (final candidate in eligibleCoupons) {
+      if (candidate.code.toUpperCase() == code) {
+        coupon = candidate;
+        break;
+      }
+    }
+
+    if (coupon == null) {
+      final maxPointsByPrice = math.max(
+        0,
+        (widget.package.price * 10).floor(),
+      );
+      final nextPoints = math.min(
+        _selectedSpentPoints,
+        math.min(_pointBalance ?? maxPointsByPrice, maxPointsByPrice),
+      );
+      setState(() {
+        _selectedCouponId = null;
+        _selectedCouponDiscount = 0;
+        _selectedSpentPoints = nextPoints;
+        _spentPointsController.text = nextPoints.toString();
+        _couponCodeError = code.isEmpty
+            ? 'กรุณากรอกโค้ดคูปอง'
+            : 'ไม่พบโค้ดนี้ในคูปองที่ใช้ได้ หรือยอดซื้อไม่ถึงขั้นต่ำ';
+      });
+      return;
+    }
+
+    final discount = _calculateCouponDiscount(coupon);
+    final maxPointsByPrice = math.max(
+      0,
+      ((widget.package.price - discount) * 10).floor(),
+    );
+    final maxAllowedPoints = math.min(
+      _pointBalance ?? maxPointsByPrice,
+      maxPointsByPrice,
+    );
+    final nextPoints = math.min(_selectedSpentPoints, maxAllowedPoints);
+
+    setState(() {
+      _selectedCouponId = coupon!.couponId;
+      _selectedCouponDiscount = discount;
+      _selectedSpentPoints = nextPoints;
+      _spentPointsController.text = nextPoints.toString();
+      _couponCodeError = null;
+      _errorMessage = null;
+    });
   }
 
   // ========================================

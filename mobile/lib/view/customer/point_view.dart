@@ -37,7 +37,9 @@ class _CustomerPointViewState extends State<CustomerPointView> {
 
   Future<void> _refresh() async {
     final future = _fetchPoints();
-    setState(() => _pointsFuture = future);
+    setState(() {
+      _pointsFuture = future;
+    });
     try {
       await future;
     } catch (_) {

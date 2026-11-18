@@ -13,7 +13,7 @@ import 'package:mobile/view/admin/coupon_view.dart';
 import 'package:mobile/view/admin/user_coupon_view.dart';
 import 'package:mobile/view/admin/user_management_view.dart';
 import 'package:mobile/view/admin/report_view.dart';
-import 'package:mobile/view/admin/admin_overview_section.dart';
+import 'package:mobile/view/admin/admin_overview_view.dart';
 
 class AdminHomePageView extends StatelessWidget {
   const AdminHomePageView({super.key});

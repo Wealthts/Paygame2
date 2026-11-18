@@ -135,6 +135,93 @@ const createUserCoupon = async (req, res) => {
     } finally { if (connection) connection.release(); }
 };
 
+// ผู้ใช้รับคูปองด้วยรหัสด้วยตัวเอง
+const claimCouponByCode = async (req, res) => {
+    const userId = Number(req.user && req.user.user_id);
+    const code = typeof (req.body || {}).code === 'string'
+        ? req.body.code.trim().toUpperCase()
+        : '';
+
+    if (!Number.isInteger(userId) || userId <= 0 || !code || code.length > 50) {
+        return res.status(400).json({ message: 'กรุณากรอกรหัสคูปองให้ถูกต้อง' });
+    }
+
+    let connection;
+    let transactionStarted = false;
+
+    try {
+        connection = await db.promise().getConnection();
+        await connection.beginTransaction();
+        transactionStarted = true;
+
+        const [coupons] = await connection.query(
+            `SELECT coupon_id, is_active, use_limit, use_count
+             FROM coupons
+             WHERE code = ?
+               AND start_date <= NOW()
+               AND end_date >= NOW()
+             LIMIT 1
+             FOR UPDATE`,
+            [code]
+        );
+
+        if (coupons.length === 0) {
+            const error = new Error('ไม่พบรหัสคูปอง หรือคูปองหมดอายุ/ยังไม่เริ่มใช้งาน');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const coupon = coupons[0];
+        if (Number(coupon.is_active) !== 1) {
+            const error = new Error('คูปองนี้ปิดใช้งานอยู่');
+            error.statusCode = 409;
+            throw error;
+        }
+
+        if (coupon.use_limit !== null && Number(coupon.use_count) >= Number(coupon.use_limit)) {
+            const error = new Error('คูปองนี้ถูกใช้ครบจำนวนแล้ว');
+            error.statusCode = 409;
+            throw error;
+        }
+
+        const [existing] = await connection.query(
+            `SELECT user_coupon_id
+             FROM user_coupons
+             WHERE user_id = ? AND coupon_id = ? AND used_at IS NULL
+             LIMIT 1`,
+            [userId, coupon.coupon_id]
+        );
+
+        if (existing.length > 0) {
+            const error = new Error('คุณมีคูปองนี้อยู่แล้ว');
+            error.statusCode = 409;
+            throw error;
+        }
+
+        const [result] = await connection.query(
+            `INSERT INTO user_coupons (user_id, coupon_id) VALUES (?, ?)`,
+            [userId, coupon.coupon_id]
+        );
+
+        await connection.commit();
+        transactionStarted = false;
+
+        return res.status(201).json({
+            message: 'เพิ่มคูปองเข้าบัญชีแล้ว',
+            user_coupon_id: result.insertId,
+            coupon_id: coupon.coupon_id
+        });
+    } catch (error) {
+        if (transactionStarted && connection) await connection.rollback();
+        console.error('Claim Coupon Error:', error);
+        return res.status(error.statusCode || 500).json({
+            message: error.statusCode ? error.message : 'ไม่สามารถเพิ่มคูปองได้ กรุณาลองใหม่'
+        });
+    } finally {
+        if (connection) connection.release();
+    }
+};
+
 
 // 2. Admin ดูคูปองของผู้ใช้ทั้งหมด
 const getAllUserCoupons = (req, res) => {
@@ -389,6 +476,7 @@ const deleteUserCoupon = async (req, res) => {
 
 module.exports = {
     createUserCoupon,
+    claimCouponByCode,
     getAllUserCoupons,
     getMyCoupons,
     getUserCouponById,

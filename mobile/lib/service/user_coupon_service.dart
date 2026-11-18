@@ -1,5 +1,5 @@
-import '../model/user_coupon_model.dart';
-import 'api_service.dart';
+import 'package:mobile/model/user_coupon_model.dart';
+import 'package:mobile/service/api_service.dart';
 
 class UserCouponService {
   final ApiService api;
@@ -54,6 +54,13 @@ class UserCouponService {
 
       return CustomerCouponModel.fromJson(Map<String, dynamic>.from(item));
     }).toList();
+  }
+
+  Future<void> claimCouponByCode(String code) async {
+    await api.post(
+      '/api/user-coupons/claim',
+      body: {'code': code.trim().toUpperCase()},
+    );
   }
 
   // Assign coupon to member

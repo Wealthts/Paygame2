@@ -5,6 +5,8 @@ import 'package:material_ui/material_ui.dart';
 abstract final class AppColors {
   static const Color red = Color(0xFFB0151F);
   static const Color redDark = Color(0xFF7A0E15);
+  static const Color redNormal = Color.fromARGB(255, 172, 23, 33);
+  static const Color redSoft = Color.fromARGB(255, 229, 99, 108);
   static const Color gold = Color(0xFFD4A72C);
   static const Color goldLight = Color(0xFFF2CE63);
   static const Color goldText = Color(0xFF7D5E0B);
@@ -21,4 +23,5 @@ abstract final class AppColors {
   static const Color successBg = Color(0xFFE5F4EA);
   static const Color danger = Color(0xFF9A111B);
   static const Color dangerBg = Color(0xFFFBE3E4);
+  static const Color black = Color.fromARGB(255, 13, 13, 13);
 }

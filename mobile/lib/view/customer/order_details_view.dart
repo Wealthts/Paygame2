@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:mobile/model/order_model.dart';
 import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/order_service.dart';
+import 'package:mobile/view/customer/payment_view.dart';
 
 class CustomerOrderDetailsView extends StatelessWidget {
   final OrderModel order;
@@ -110,6 +111,38 @@ class CustomerOrderDetailsView extends StatelessWidget {
                 _detailRow('วันที่เสร็จสิ้น', _formatDate(order.completedAt)),
               ],
             ),
+
+            if (order.status == 'Pending' && order.paymentStatus == null) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () async {
+                    final result = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute<bool>(
+                        builder: (_) => CustomerPaymentView(
+                          orderId: order.orderId,
+                          amount: order.totalAmount,
+                          gameName: order.gameName,
+                          packageName: order.packageName,
+                          returnToOrder: true,
+                        ),
+                      ),
+                    );
+
+                    if (result == true && context.mounted) {
+                      Navigator.of(context).pop(true);
+                    }
+                  },
+                  icon: const Icon(Icons.payment),
+                  label: const Text('แจ้งการชำระเงิน'),
+                ),
+              ),
+            ],
 
             if (order.status == 'Pending' && order.paymentStatus != 'Paid') ...[
               const SizedBox(height: 8),

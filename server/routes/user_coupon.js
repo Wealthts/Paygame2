@@ -4,6 +4,7 @@ const router = express.Router();
 
 const {
     createUserCoupon,
+    claimCouponByCode,
     getAllUserCoupons,
     getMyCoupons,
     getUserCouponById,
@@ -15,6 +16,9 @@ const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
 // Admin Create coupon for user
 router.post('/', verifyToken, verifyAdmin, createUserCoupon);
+
+// User claims an available coupon using its code
+router.post('/claim', verifyToken, claimCouponByCode);
 
 // Admin view all user coupons
 router.get('/all', verifyToken, verifyAdmin, getAllUserCoupons);

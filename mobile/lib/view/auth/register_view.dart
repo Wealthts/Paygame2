@@ -21,6 +21,7 @@ class _RegisterViewState extends State<RegisterView> {
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   @override
   void dispose() {
@@ -41,9 +42,93 @@ class _RegisterViewState extends State<RegisterView> {
       password: _passwordController.text,
       email: _emailController.text.trim(),
       displayName: _displayNameController.text.trim(),
+      acceptedTerms: _acceptedTerms,
     );
 
     if (mounted && success) Navigator.of(context).pop(true);
+  }
+
+  void _showTerms() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('ข้อกำหนดและเงื่อนไขการใช้งาน'),
+        content: const SingleChildScrollView(
+          child: Text(
+            '1. ผู้ใช้ต้องให้ข้อมูลที่ถูกต้องและเป็นจริงในการสมัครสมาชิก\n\n'
+            '2. ผู้ใช้ต้องเก็บรักษารหัสผ่านและรหัส OTP เป็นความลับ '
+            'และรับผิดชอบกิจกรรมทั้งหมดที่เกิดขึ้นภายใต้บัญชีของตน\n\n'
+            '3. การเติมเกมและการชำระเงินที่ดำเนินการสำเร็จแล้ว '
+            'ไม่สามารถยกเลิกหรือขอคืนเงินได้ เว้นแต่เกิดจากความผิดพลาดของระบบ\n\n'
+            '4. เราจัดเก็บและใช้ข้อมูลส่วนบุคคล (ชื่อ, Email) '
+            'เพื่อการให้บริการและการยืนยันตัวตนเท่านั้น\n\n'
+            '5. เราขอสงวนสิทธิ์ในการระงับบัญชีที่ละเมิดข้อกำหนดหรือมีพฤติกรรมฉ้อโกง\n\n'
+            '6. เราอาจแก้ไขข้อกำหนดนี้ได้โดยแจ้งให้ทราบผ่านแอปพลิเคชัน',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('ปิด'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _termsCheckbox() {
+    return FormField<bool>(
+      initialValue: _acceptedTerms,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (_) =>
+          _acceptedTerms ? null : 'กรุณายอมรับข้อกำหนดและเงื่อนไขก่อนสมัครสมาชิก',
+      builder: (state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                  value: _acceptedTerms,
+                  onChanged: (value) {
+                    setState(() => _acceptedTerms = value ?? false);
+                    state.didChange(_acceptedTerms);
+                  },
+                ),
+                Expanded(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Text('ฉันยอมรับ '),
+                      InkWell(
+                        onTap: _showTerms,
+                        child: const Text(
+                          'ข้อกำหนดและเงื่อนไข',
+                          style: TextStyle(
+                            color: AppColors.red,
+                            fontWeight: FontWeight.w700,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: AppColors.danger, fontSize: 12),
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _field({
@@ -196,6 +281,8 @@ class _RegisterViewState extends State<RegisterView> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      _termsCheckbox(),
                       if (auth.errorMessage != null) ...[
                         const SizedBox(height: 16),
                         Container(

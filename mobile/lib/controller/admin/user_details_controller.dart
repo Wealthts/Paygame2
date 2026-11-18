@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../../model/admin/user_details_model.dart';
-import '../../service/admin/user_management_service.dart';
+import 'package:mobile/model/admin/user_details_model.dart';
+import 'package:mobile/service/admin/user_management_service.dart';
 
 class UserDetailsController extends ChangeNotifier {
   final UserManagementService userService;
@@ -14,14 +14,18 @@ class UserDetailsController extends ChangeNotifier {
   String? errorMessage;
 
   Future<void> loadDetails(int userId) async {
-    isLoading = true;
+    if (isLoading) return;
+    final hasExistingDetails = details != null;
+    isLoading = !hasExistingDetails;
     errorMessage = null;
     notifyListeners();
 
     try {
       details = await userService.getUserDetails(userId);
     } catch (e) {
-      errorMessage = e.toString();
+      if (!hasExistingDetails) {
+        errorMessage = e.toString();
+      }
     } finally {
       isLoading = false;
       notifyListeners();

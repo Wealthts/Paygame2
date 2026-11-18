@@ -1,3 +1,4 @@
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:mobile/model/game_model.dart';

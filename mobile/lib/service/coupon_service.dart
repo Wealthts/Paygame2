@@ -1,5 +1,5 @@
-import '../model/coupon_model.dart';
-import 'api_service.dart';
+import 'package:mobile/model/coupon_model.dart';
+import 'package:mobile/service/api_service.dart';
 
 class CouponService {
   final ApiService api;
