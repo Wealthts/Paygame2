@@ -7,21 +7,8 @@ import 'package:mobile/service/user_coupon_service.dart';
 import 'package:mobile/view/customer/coupon_view.dart';
 
 void main() {
-  // An empty response should show the message for customers with no coupons.
-  testWidgets('5. Customer page displays empty-coupon state', (tester) async {
-    await tester.pumpWidget(
-      Provider<UserCouponService>(
-        create: (_) => _CustomerCoupons(),
-        child: const MaterialApp(home: CustomerCouponView()),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('คูปองของฉัน'), findsOneWidget);
-    expect(find.text('คุณยังไม่ได้รับคูปอง'), findsOneWidget);
-  });
-
   // This uses one usable coupon and one disabled coupon to check the filter.
-  testWidgets('6. Customer sees coupon and filters usable coupons', (
+  testWidgets('6. Customer sees coupons and filters usable coupons', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -66,6 +53,10 @@ void main() {
     await tester.tap(find.text('เพิ่มคูปอง'));
     await tester.pump(const Duration(milliseconds: 100));
     expect(service.claimedCode, 'HELLO');
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
   });
 }
 

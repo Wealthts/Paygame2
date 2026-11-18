@@ -10,8 +10,10 @@ import 'package:mobile/model/point_model.dart';
 import 'package:mobile/model/receipt_model.dart';
 import 'package:mobile/model/user_coupon_model.dart';
 import 'package:mobile/model/user_model.dart';
+import 'package:mobile/model/admin/admin_report_model.dart';
 import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/auth_service.dart';
+import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/service/customer/customer_game_service.dart';
 import 'package:mobile/service/game_service.dart';
 import 'package:mobile/service/package_service.dart';
@@ -99,6 +101,61 @@ final testReceipt = ReceiptModel(
   packageName: '500 Diamonds',
   totalAmount: 159,
 );
+
+const testReportSummary = ReportSummary(
+  totalOrders: 10,
+  pendingOrders: 2,
+  completedOrders: 7,
+  cancelledOrders: 1,
+  paidPaymentCount: 7,
+  totalRevenue: 1200.5,
+  totalMembers: 4,
+);
+
+const testAdminReport = AdminReportModel(
+  summary: testReportSummary,
+  monthlyRevenue: [
+    MonthlyRevenueModel(month: '2026-01', revenue: 500, paymentCount: 3),
+    MonthlyRevenueModel(month: '2026-02', revenue: 700.5, paymentCount: 4),
+  ],
+  topGames: [
+    TopGameModel(gameName: 'Arena Test', orderCount: 7, completedSales: 900),
+    TopGameModel(gameName: 'Racing Pro', orderCount: 3, completedSales: 300.5),
+  ],
+  orderStatuses: [
+    OrderStatusModel(status: 'Completed', orderCount: 7),
+    OrderStatusModel(status: 'Pending', orderCount: 2),
+    OrderStatusModel(status: 'Cancelled', orderCount: 1),
+  ],
+);
+
+class FakeReportService extends ReportService {
+  FakeReportService({
+    this.summary = testReportSummary,
+    this.report = testAdminReport,
+  }) : super(ApiService());
+
+  ReportSummary summary;
+  AdminReportModel report;
+  Object? summaryError;
+  Object? reportError;
+  int summaryCalls = 0;
+  int reportCalls = 0;
+
+  @override
+  Future<ReportSummary> getSummary() async {
+    summaryCalls++;
+    if (summaryError != null) throw summaryError!;
+    return summary;
+  }
+
+  @override
+  Future<AdminReportModel> getAdminReport() async {
+    reportCalls++;
+    if (reportError != null) throw reportError!;
+    return report;
+  }
+}
 
 class FakeAuthService extends AuthService {
   FakeAuthService() : super(ApiService());

@@ -1,50 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:js_interop';
-
-import 'package:web/web.dart' as web;
+import 'csv_export_service_stub.dart'
+    if (dart.library.js_interop) 'csv_export_service_web.dart'
+    as platform;
 
 class CsvExportService {
   static void download({
     required String fileName,
     required List<List<Object?>> rows,
-  }) {
-    final csvContent = rows
-        .map((row) => row.map(_escapeCsvValue).join(','))
-        .join('\r\n');
-
-    // BOM ช่วยให้ Excel อ่านภาษาไทยได้ถูกต้อง
-    final bytes = utf8.encode('\uFEFF$csvContent');
-    final blob = web.Blob(
-      [bytes.toJS].toJS,
-      web.BlobPropertyBag(type: 'text/csv;charset=utf-8'),
-    );
-
-    final url = web.URL.createObjectURL(blob);
-    final anchor = web.HTMLAnchorElement()
-      ..href = url
-      ..download = fileName;
-
-    web.document.body?.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-
-    // คืนหน่วยความจำหลังจากเบราว์เซอร์เริ่มดาวน์โหลดแล้ว
-    Future<void>.delayed(const Duration(seconds: 1), () {
-      web.URL.revokeObjectURL(url);
-    });
-  }
-
-  static String _escapeCsvValue(Object? value) {
-    final rawValue = value?.toString() ?? '';
-    // ป้องกันข้อความที่อาจถูกโปรแกรมตารางคำนวณตีความเป็นสูตร
-    final safeValue =
-        value is String && RegExp(r'^\s*[=+\-@]').hasMatch(rawValue)
-        ? "'$rawValue"
-        : rawValue;
-
-    // Escape เครื่องหมาย double quote
-    final escapedValue = safeValue.replaceAll('"', '""');
-    return '"$escapedValue"';
-  }
+  }) => platform.CsvExportPlatform.download(fileName: fileName, rows: rows);
 }
