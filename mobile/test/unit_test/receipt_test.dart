@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/controller/admin/receipt_controller.dart';
+import 'package:mobile/controller/receipt_controller.dart';
 import 'package:mobile/model/receipt_model.dart';
 import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/receipt_service.dart';
