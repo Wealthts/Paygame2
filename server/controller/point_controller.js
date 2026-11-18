@@ -6,7 +6,6 @@ const db = require('../db_config');
 async function getMyPoints(req, res) {
     try {
         const userId = req.user.user_id;
-
         const [rows] = await db.promise().query(
             `SELECT
                 COUNT(*) AS transaction_count,

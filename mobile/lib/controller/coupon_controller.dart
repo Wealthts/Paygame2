@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../model/coupon_model.dart';
-import '../service/coupon_service.dart';
+import 'package:mobile/model/coupon_model.dart';
+import 'package:mobile/service/coupon_service.dart';
 
 class CouponController extends ChangeNotifier {
   final CouponService couponService;

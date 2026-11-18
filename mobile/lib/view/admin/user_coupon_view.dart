@@ -1,11 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/user_coupon_controller.dart';
-import '../../model/coupon_model.dart';
-import '../../model/user_coupon_model.dart';
-import '../../service/coupon_service.dart';
-import '../../service/user_coupon_service.dart';
+import 'package:mobile/controller/user_coupon_controller.dart';
+import 'package:mobile/model/coupon_model.dart';
+import 'package:mobile/model/user_coupon_model.dart';
+import 'package:mobile/service/coupon_service.dart';
+import 'package:mobile/service/user_coupon_service.dart';
 
 class UserCouponView extends StatefulWidget {
   const UserCouponView({super.key});

@@ -2,9 +2,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/receipt_model.dart';
-import '../../service/receipt_service.dart';
-import 'receipt_details_view.dart';
+import 'package:mobile/model/receipt_model.dart';
+import 'package:mobile/service/receipt_service.dart';
+import 'package:mobile/view/customer/receipt_details_view.dart';
 
 class CustomerReceiptHistoryView extends StatefulWidget {
   const CustomerReceiptHistoryView({super.key});

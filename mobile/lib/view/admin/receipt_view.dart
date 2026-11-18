@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
-import 'package:mobile/controller/admin/receipt_controller.dart';
+import 'package:mobile/controller/receipt_controller.dart';
 import 'package:mobile/model/receipt_model.dart';
 import 'package:mobile/service/receipt_service.dart';
 

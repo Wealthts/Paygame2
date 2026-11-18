@@ -2,8 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/user_coupon_model.dart';
-import '../../service/user_coupon_service.dart';
+import 'package:mobile/model/user_coupon_model.dart';
+import 'package:mobile/service/user_coupon_service.dart';
 
 class CustomerCouponView extends StatefulWidget {
   const CustomerCouponView({super.key});

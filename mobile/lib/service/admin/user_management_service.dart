@@ -1,6 +1,6 @@
-import '../../model/admin/user_admin_model.dart';
-import '../../model/admin/user_details_model.dart';
-import '../api_service.dart';
+import 'package:mobile/model/admin/user_admin_model.dart';
+import 'package:mobile/model/admin/user_details_model.dart';
+import 'package:mobile/service/api_service.dart';
 
 class UserManagementService {
   final ApiService api;

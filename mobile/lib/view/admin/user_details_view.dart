@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/admin/user_details_controller.dart';
-import '../../model/admin/user_details_model.dart';
-import '../../service/admin/user_management_service.dart';
+import 'package:mobile/controller/admin/user_details_controller.dart';
+import 'package:mobile/model/admin/user_details_model.dart';
+import 'package:mobile/service/admin/user_management_service.dart';
 
 class UserDetailsView extends StatefulWidget {
   final int userId;

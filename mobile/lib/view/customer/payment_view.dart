@@ -2,8 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../service/api_service.dart';
-import '../../service/payment_service.dart';
+import 'package:mobile/service/api_service.dart';
+import 'package:mobile/service/payment_service.dart';
 
 class CustomerPaymentView extends StatefulWidget {
   final int orderId;
