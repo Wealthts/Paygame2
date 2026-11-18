@@ -52,6 +52,6 @@ class ReceiptController extends ChangeNotifier {
       return error.message;
     }
 
-    return 'เกิดข้อผิดพลาด กรุณาลองอีกครั้ง';
+    return 'Something went wrong. Please try again.';
   }
 }

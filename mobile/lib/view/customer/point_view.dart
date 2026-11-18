@@ -37,7 +37,9 @@ class _CustomerPointViewState extends State<CustomerPointView> {
 
   Future<void> _refresh() async {
     final future = _fetchPoints();
-    setState(() => _pointsFuture = future);
+    setState(() {
+      _pointsFuture = future;
+    });
     try {
       await future;
     } catch (_) {
@@ -49,7 +51,7 @@ class _CustomerPointViewState extends State<CustomerPointView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cream,
-      appBar: AppBar(title: const Text('แต้มสะสมของฉัน')),
+      appBar: AppBar(title: const Text('My Points')),
       body: FutureBuilder<_PointPageData>(
         future: _pointsFuture,
         builder: (context, snapshot) {
@@ -82,7 +84,7 @@ class _CustomerPointViewState extends State<CustomerPointView> {
                   children: [
                     Expanded(
                       child: _SummaryCard(
-                        title: 'ได้รับทั้งหมด',
+                        title: 'Total earned',
                         value: '+${AppFormatter.formatPoints(earned)}',
                         icon: Icons.trending_up_rounded,
                         color: AppColors.success,
@@ -92,7 +94,7 @@ class _CustomerPointViewState extends State<CustomerPointView> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _SummaryCard(
-                        title: 'ใช้ไปทั้งหมด',
+                        title: 'Total spent',
                         value: '-${AppFormatter.formatPoints(spent)}',
                         icon: Icons.trending_down_rounded,
                         color: AppColors.danger,
@@ -118,12 +120,12 @@ class _CustomerPointViewState extends State<CustomerPointView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'คูปองของฉัน',
+                                'My Coupons',
                                 style: TextStyle(fontWeight: FontWeight.w700),
                               ),
                               SizedBox(height: 3),
                               Text(
-                                'ตรวจสอบคูปองที่ได้รับและเงื่อนไขการใช้งาน',
+                                'View your coupons and their terms',
                                 style: TextStyle(
                                   color: AppColors.inkMuted,
                                   fontSize: 12,
@@ -133,7 +135,7 @@ class _CustomerPointViewState extends State<CustomerPointView> {
                           ),
                         ),
                         IconButton(
-                          tooltip: 'เปิดคูปอง',
+                          tooltip: 'Open coupons',
                           onPressed: () => Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (_) => const CustomerCouponView(),
@@ -153,7 +155,7 @@ class _CustomerPointViewState extends State<CustomerPointView> {
                   children: [
                     const Expanded(
                       child: Text(
-                        'ประวัติแต้มสะสม',
+                        'Point History',
                         style: TextStyle(
                           color: AppColors.ink,
                           fontWeight: FontWeight.w800,
@@ -162,7 +164,7 @@ class _CustomerPointViewState extends State<CustomerPointView> {
                       ),
                     ),
                     Text(
-                      '${data.history.length} รายการ',
+                      '${data.history.length} items',
                       style: const TextStyle(
                         color: AppColors.inkMuted,
                         fontSize: 12,
@@ -214,7 +216,7 @@ class _PointsBalanceCard extends StatelessWidget {
               Icon(Icons.stars_rounded, color: AppColors.goldLight, size: 26),
               SizedBox(width: 9),
               Text(
-                'แต้มสะสมคงเหลือ',
+                'Points balance',
                 style: TextStyle(color: AppColors.white, fontSize: 14),
               ),
             ],
@@ -304,10 +306,10 @@ class _PointHistoryTile extends StatelessWidget {
     final isEarned = point.pointsDelta > 0;
     final color = isEarned ? AppColors.success : AppColors.danger;
     final label = isEarned
-        ? 'ได้รับแต้ม'
+        ? 'Earned'
         : point.pointsDelta < 0
-        ? 'ใช้แต้ม'
-        : (point.type.isEmpty ? 'รายการแต้ม' : point.type);
+        ? 'Spent'
+        : (point.type.isEmpty ? 'Point transaction' : point.type);
 
     return Card(
       child: Padding(
@@ -336,7 +338,7 @@ class _PointHistoryTile extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     point.orderId == null
-                        ? 'รายการแต้มทั่วไป'
+                        ? 'General point transaction'
                         : 'Order #${point.orderId}',
                     style: const TextStyle(
                       color: AppColors.inkMuted,
@@ -389,12 +391,12 @@ class _EmptyPointHistory extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Text(
-              'ยังไม่มีประวัติแต้มสะสม',
+              'No point history yet',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 6),
             const Text(
-              'เมื่อคุณได้รับหรือใช้แต้ม รายการจะแสดงที่หน้านี้',
+              'Points you earn or spend will appear here.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
             ),
@@ -416,7 +418,7 @@ class _LoadingPoints extends StatelessWidget {
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 14),
-          Text('กำลังโหลดข้อมูลแต้มสะสม...'),
+          Text('Loading points...'),
         ],
       ),
     );
@@ -443,7 +445,7 @@ class _ErrorPoints extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Text(
-              'ไม่สามารถโหลดข้อมูลแต้มสะสมได้',
+              'Could not load points',
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
@@ -451,7 +453,7 @@ class _ErrorPoints extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('ลองอีกครั้ง'),
+              label: const Text('Try again'),
             ),
           ],
         ),
