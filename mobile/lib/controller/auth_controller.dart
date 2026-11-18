@@ -36,6 +36,7 @@ class AuthController extends ChangeNotifier {
     required String password,
     required String email,
     required String displayName,
+    required bool acceptedTerms,
   }) async {
     if (_isLoading) return false;
 
@@ -49,6 +50,7 @@ class AuthController extends ChangeNotifier {
         password: password,
         email: email,
         displayName: displayName,
+        acceptedTerms: acceptedTerms,
       );
 
       return true;
@@ -59,6 +61,60 @@ class AuthController extends ChangeNotifier {
         _errorMessage = 'สมัครสมาชิกไม่สำเร็จ กรุณาลองอีกครั้ง';
       }
 
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // ========================================
+  // Forgot Password
+  // ========================================
+
+  Future<bool> requestPasswordReset({required String email}) async {
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await authService.requestPasswordReset(email: email);
+      return true;
+    } catch (error) {
+      _errorMessage = error is ApiException
+          ? error.message
+          : 'ส่งรหัส OTP ไม่สำเร็จ กรุณาลองอีกครั้ง';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    if (_isLoading) return false;
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await authService.resetPassword(
+        email: email,
+        otp: otp,
+        newPassword: newPassword,
+      );
+      return true;
+    } catch (error) {
+      _errorMessage = error is ApiException
+          ? error.message
+          : 'เปลี่ยนรหัสผ่านไม่สำเร็จ กรุณาลองอีกครั้ง';
       return false;
     } finally {
       _isLoading = false;

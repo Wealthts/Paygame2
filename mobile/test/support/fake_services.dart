@@ -107,6 +107,17 @@ class FakeAuthService extends AuthService {
     required String password,
     required String email,
     required String displayName,
+    required bool acceptedTerms,
+  }) async {}
+
+  @override
+  Future<void> requestPasswordReset({required String email}) async {}
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
   }) async {}
 
   @override
