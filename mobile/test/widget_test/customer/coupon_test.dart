@@ -6,6 +6,7 @@ import 'package:mobile/view/customer/coupon_view.dart';
 
 import '../../support/fake_services.dart';
 
+
 void main() {
   testWidgets('coupon page renders the empty-coupon state', (tester) async {
     await tester.pumpWidget(

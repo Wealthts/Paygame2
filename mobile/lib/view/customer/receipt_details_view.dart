@@ -4,7 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../../model/receipt_model.dart';
+import 'package:mobile/model/receipt_model.dart';
 
 class CustomerReceiptDetailsView extends StatefulWidget {
   final ReceiptModel receipt;

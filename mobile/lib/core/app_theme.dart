@@ -1,7 +1,7 @@
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'app_colors.dart';
+import 'package:mobile/core/app_colors.dart';
 
 abstract final class AppTheme {
   static ThemeData get light {

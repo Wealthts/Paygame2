@@ -2,8 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/payment_model.dart';
-import '../../service/payment_service.dart';
+import 'package:mobile/model/payment_model.dart';
+import 'package:mobile/service/payment_service.dart';
 
 class PaymentHistoryView extends StatefulWidget {
   const PaymentHistoryView({super.key});

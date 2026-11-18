@@ -2,11 +2,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/package_controller.dart';
-import '../../model/package_model.dart';
-import '../../model/game_model.dart';
-import '../../service/package_service.dart';
-import '../../service/game_service.dart';
+import 'package:mobile/controller/package_controller.dart';
+import 'package:mobile/model/package_model.dart';
+import 'package:mobile/model/game_model.dart';
+import 'package:mobile/service/package_service.dart';
+import 'package:mobile/service/game_service.dart';
 
 class PackageView extends StatelessWidget {
   const PackageView({super.key});

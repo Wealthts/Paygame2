@@ -1,9 +1,8 @@
-import '../../model/admin/admin_report_model.dart';
-import '../api_service.dart';
+import 'package:mobile/model/admin/admin_report_model.dart';
+import 'package:mobile/service/api_service.dart';
 
 class ReportService {
   final ApiService api;
-
   ReportService(this.api);
 
   Future<AdminReportModel> getAdminReport() async {

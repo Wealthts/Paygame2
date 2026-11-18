@@ -2,9 +2,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/game_controller.dart';
-import '../../model/game_model.dart';
-import '../../service/game_service.dart';
+import 'package:mobile/controller/game_controller.dart';
+import 'package:mobile/service/game_service.dart';
+import 'package:mobile/model/game_model.dart';
 
 class GameView extends StatelessWidget {
   const GameView({super.key});
