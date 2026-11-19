@@ -37,6 +37,9 @@ class _RegisterViewState extends State<RegisterView> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     FocusScope.of(context).unfocus();
 
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     final success = await context.read<AuthController>().register(
       username: _usernameController.text.trim(),
       password: _passwordController.text,
@@ -45,7 +48,19 @@ class _RegisterViewState extends State<RegisterView> {
       acceptedTerms: _acceptedTerms,
     );
 
-    if (mounted && success) Navigator.of(context).pop(true);
+    if (!mounted) return;
+
+    if (success) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ'),
+            backgroundColor: AppColors.ink,
+          ),
+        );
+      navigator.pop(true);
+    }
   }
 
   void _showTerms() {

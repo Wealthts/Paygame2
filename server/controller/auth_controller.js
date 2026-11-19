@@ -71,18 +71,14 @@ const register = async (req, res) => {
 
         // 7. Insert user
         const [result] = await db.promise().query(
-            `INSERT INTO users (
-                username, password_hash,
-                email, display_name,
-                is_active, role
-            )
-            VALUES (?, ?, ?, ?, ?, ?)`,
-            [
-                cleanUsername, hashedPassword,
-                cleanEmail, cleanDisplayName,
-                1, 'user'
-            ]
+            `INSERT INTO users (username, password_hash, email, display_name, role, is_active, terms_accepted_at)
+            VALUES (?, ?, ?, ?, 'user', 1, NOW())`,
+            [cleanUsername, hashedPassword,
+                cleanEmail, cleanDisplayName,]
         );
+
+        
+        
 
         return res.status(201).json({
             message: "Register successful",
