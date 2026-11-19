@@ -7,7 +7,7 @@ import 'package:mobile/view/customer/package_view.dart';
 import '../../support/fake_services.dart';
 
 void main() {
-  testWidgets('package page displays packages returned by the service', (tester) async {
+  testWidgets('customer package page displays packages for selected game', (tester) async {
     await tester.pumpWidget(
       Provider<CustomerPackageService>(
         create: (_) => FakeCustomerPackageService(),
@@ -15,6 +15,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+
+    expect(find.text('Arena Test'), findsWidgets);
+    expect(find.text('เลือกแพ็กเกจที่ต้องการ'), findsOneWidget);
+    expect(find.text('พบ 1 แพ็กเกจ'), findsOneWidget);
     expect(find.text('500 Diamonds'), findsOneWidget);
     expect(find.text('฿159.00'), findsOneWidget);
   });

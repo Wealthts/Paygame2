@@ -16,6 +16,8 @@ import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/auth_service.dart';
 import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/service/customer/customer_game_service.dart';
+import 'package:mobile/service/game_service.dart';
+import 'package:mobile/service/package_service.dart';
 import 'package:mobile/service/customer/customer_package_service.dart';
 import 'package:mobile/service/customer/customer_profile_service.dart';
 import 'package:mobile/service/coupon_service.dart';
@@ -305,4 +307,98 @@ Widget withAuthController(Widget child) {
     create: (_) => AuthController(FakeAuthService()),
     child: MaterialApp(home: child),
   );
+}
+
+
+// Fake services for admin game/package tests.
+class FakeGameService extends GameService {
+  FakeGameService() : super(ApiService());
+
+  final List<GameModel> items = [testGame];
+
+  @override
+  Future<List<GameModel>> getAllGames() async => List<GameModel>.from(items);
+
+  @override
+  Future<void> createGame(Map<String, dynamic> data) async {
+    items.add(GameModel.fromJson({
+      ...data,
+      'game_id': items.length + 1,
+    }));
+  }
+
+  @override
+  Future<void> updateGame(int gameId, Map<String, dynamic> data) async {
+    final index = items.indexWhere((game) => game.gameId == gameId);
+    if (index >= 0) {
+      items[index] = GameModel.fromJson({...data, 'game_id': gameId});
+    }
+  }
+
+  @override
+  Future<void> updateGameStatus(int gameId, bool isActive) async {
+    final index = items.indexWhere((game) => game.gameId == gameId);
+    if (index >= 0) {
+      final game = items[index];
+      items[index] = GameModel(
+        gameId: game.gameId,
+        gameName: game.gameName,
+        category: game.category,
+        uidPattern: game.uidPattern,
+        requiresServer: game.requiresServer,
+        imageUrl: game.imageUrl,
+        isActive: isActive,
+      );
+    }
+  }
+}
+
+class FakePackageService extends PackageService {
+  FakePackageService() : super(ApiService());
+
+  final List<PackageModel> items = [testPackage];
+
+  @override
+  Future<List<PackageModel>> getAllPackages() async =>
+      List<PackageModel>.from(items);
+
+  @override
+  Future<void> createPackage(Map<String, dynamic> data) async {
+    items.add(PackageModel.fromJson({
+      ...data,
+      'package_id': items.length + 1,
+      'game_name': testGame.gameName,
+      'requires_server': testGame.requiresServer ? 1 : 0,
+    }));
+  }
+
+  @override
+  Future<void> updatePackage(int packageId, Map<String, dynamic> data) async {
+    final index = items.indexWhere((item) => item.packageId == packageId);
+    if (index >= 0) {
+      items[index] = PackageModel.fromJson({
+        ...data,
+        'package_id': packageId,
+        'game_name': testGame.gameName,
+        'requires_server': testGame.requiresServer ? 1 : 0,
+      });
+    }
+  }
+
+  @override
+  Future<void> updatePackageStatus(int packageId, bool isActive) async {
+    final index = items.indexWhere((item) => item.packageId == packageId);
+    if (index >= 0) {
+      final item = items[index];
+      items[index] = PackageModel(
+        packageId: item.packageId,
+        gameId: item.gameId,
+        packageName: item.packageName,
+        gameName: item.gameName,
+        price: item.price,
+        isActive: isActive,
+        requiresServer: item.requiresServer,
+      );
+    }
+  }
 }
