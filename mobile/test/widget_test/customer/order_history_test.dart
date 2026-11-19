@@ -111,30 +111,31 @@ Widget _app() {
 }
 
 void main() {
-  // ---------- การนำทางจากหน้าประวัติ order (เทสต์เดิม) ----------
+  // ---------- การนำทางจากหน้าประวัติ order ----------
   group('navigation from order history', () {
-    testWidgets('user can open payment history from order history', (
+    testWidgets(
+      'payment and receipt history actions belong to customer homepage',
+      (tester) async {
+        await tester.pumpWidget(_app());
+        await tester.pumpAndSettle();
+
+        expect(find.byTooltip('ประวัติการชำระเงิน'), findsNothing);
+        expect(find.byTooltip('ใบเสร็จของฉัน'), findsNothing);
+      },
+    );
+
+    testWidgets('tapping an order opens details and back returns to history', (
       tester,
     ) async {
-      await tester.pumpWidget(_app());
+      await _openDetails(tester);
+
+      expect(find.text('คำสั่งซื้อ #17'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Back'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byTooltip('ประวัติการชำระเงิน'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('TX-TEST-001'), findsOneWidget);
-    });
-
-    testWidgets('user can open receipt history from order history', (
-      tester,
-    ) async {
-      await tester.pumpWidget(_app());
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byTooltip('ใบเสร็จของฉัน'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('PG-TEST-0005'), findsOneWidget);
+      expect(find.text('รายการสั่งซื้อของฉัน'), findsOneWidget);
+      expect(find.text('Order #17'), findsOneWidget);
     });
   });
 

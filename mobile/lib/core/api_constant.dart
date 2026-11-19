@@ -1,3 +1,5 @@
+/// Shared server and storage constants for Mobile API clients.
+/// Keep report endpoints as server-relative paths; ApiService adds baseUrl.
 abstract final class ApiConstant {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
@@ -20,6 +22,14 @@ abstract final class ApiConstant {
   static const String userCoupons = '/api/user-coupons';
   static const String receipts = '/api/receipts';
   static const String users = '/api/users';
+
+  // Admin report endpoints share one place for route names and tests.
+  static const String adminReportsSummary = '/api/admin/reports/summary';
+  static const String adminReportsMonthlyRevenue =
+      '/api/admin/reports/monthly-revenue';
+  static const String adminReportsTopGames = '/api/admin/reports/top-games';
+  static const String adminReportsOrderStatuses =
+      '/api/admin/reports/order-statuses';
 
   static const String authTokenKey = 'auth_token';
   static const String authUserKey = 'auth_user';

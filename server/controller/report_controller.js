@@ -1,7 +1,11 @@
 const db = require('../db_config');
 
+// Admin report controller: converts SQL aggregates into JSON used by Mobile.
+// A request reaches this file only after verifyToken and verifyAdmin in report routes.
+
 // GET /api/admin/reports/summary
 // ภาพรวมระบบ
+// Summary: order counts, paid revenue, and member count for dashboard cards.
 async function getSummary(req, res) {
     try {
         const [[orderRows], [paymentRows], [memberRows]] = await Promise.all([
@@ -62,6 +66,7 @@ async function getSummary(req, res) {
 
 // GET /api/admin/reports/monthly-revenue
 // รายได้รายเดือนย้อนหลัง 6 เดือน รวมเดือนปัจจุบัน
+// Monthly revenue: approved Paid payments for the current and previous five months.
 async function getMonthlyRevenue(req, res) {
     try {
         const [rows] = await db.promise().query(`
@@ -98,6 +103,7 @@ async function getMonthlyRevenue(req, res) {
 
 // GET /api/admin/reports/top-games
 // เกมยอดนิยม 5 อันดับ
+// Top games: rank five games by order count and completed sales.
 async function getTopGames(req, res) {
     try {
         const [rows] = await db.promise().query(`
@@ -135,6 +141,7 @@ async function getTopGames(req, res) {
 
 // GET /api/admin/reports/order-statuses
 // จำนวนคำสั่งซื้อแยกตามสถานะทั้งหมด
+// Order statuses: grouped order totals used by filters and progress bars.
 async function getOrderStatuses(req, res) {
     try {
         const [rows] = await db.promise().query(`

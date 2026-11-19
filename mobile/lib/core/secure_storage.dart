@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:mobile/core/api_constant.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+/// Session-storage core used by ApiService authentication and testable storage wrappers.
 /// Small wrapper around flutter_secure_storage so session persistence has one
 /// implementation and can be replaced/mocked in tests if required.
 class SecureStorage {

@@ -3,6 +3,9 @@ const router = express.Router();
 const reportController = require('../controller/report_controller');
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
+// Report route boundary: authentication is shared with all endpoints.
+// Each query stays behind the route and controller so SQL is not exposed to Mobile.
+
 // Summary cards
 router.get('/summary', verifyToken, verifyAdmin, reportController.getSummary);
 // Monthly revenue

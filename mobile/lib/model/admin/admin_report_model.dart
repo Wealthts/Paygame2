@@ -1,3 +1,5 @@
+/// Typed Mobile representation of the /reports/summary response.
+/// fromJson converts the server's string or number values into stable Dart types.
 class ReportSummary {
   final int totalOrders;
   final int pendingOrders;
@@ -30,6 +32,7 @@ class ReportSummary {
   }
 }
 
+/// One month of completed-payment revenue and payment count.
 class MonthlyRevenueModel {
   final String month;
   final double revenue;
@@ -50,6 +53,7 @@ class MonthlyRevenueModel {
   }
 }
 
+/// One row from the server's top-games ranking.
 class TopGameModel {
   final String gameName;
   final int orderCount;
@@ -70,6 +74,7 @@ class TopGameModel {
   }
 }
 
+/// One order-status group and its total count.
 class OrderStatusModel {
   final String status;
   final int orderCount;
@@ -84,6 +89,8 @@ class OrderStatusModel {
   }
 }
 
+/// Aggregate report model returned to the full ReportView.
+/// It combines summary, monthly, game, and status API sections.
 class AdminReportModel {
   final ReportSummary summary;
   final List<MonthlyRevenueModel> monthlyRevenue;

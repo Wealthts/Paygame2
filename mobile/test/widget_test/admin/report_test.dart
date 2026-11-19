@@ -9,6 +9,7 @@ import 'package:mobile/view/admin/report_view.dart';
 import '../../support/fake_services.dart';
 import '../../support/theme_widget_test_helper.dart';
 
+// Widget setup: supplies the report service through Provider and a tall test viewport.
 Future<void> _pumpReport(WidgetTester tester, FakeReportService service) async {
   tester.view.physicalSize = const Size(1000, 2400);
   tester.view.devicePixelRatio = 1;
@@ -23,6 +24,7 @@ Future<void> _pumpReport(WidgetTester tester, FakeReportService service) async {
   await tester.pumpAndSettle();
 }
 
+// Report widget contract: content rendering, status filtering, and retry behavior.
 void main() {
   testPayGameThemeContract('Admin reports');
 

@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/core/api_constant.dart';
 import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/service/api_service.dart';
 
+// Mock API boundary: no HTTP/network calls; records requested report endpoints.
 class _MockApiService extends ApiService {
   _MockApiService(this.responses);
 
@@ -18,7 +20,7 @@ class _MockApiService extends ApiService {
 }
 
 Map<String, Object?> _reportResponses() => {
-  '/api/admin/reports/summary': {
+  ApiConstant.adminReportsSummary: {
     'summary': {
       'total_orders': '12',
       'pending_orders': 2,
@@ -29,23 +31,24 @@ Map<String, Object?> _reportResponses() => {
       'total_members': 5,
     },
   },
-  '/api/admin/reports/monthly-revenue': {
+  ApiConstant.adminReportsMonthlyRevenue: {
     'monthly_revenue': [
       {'month': '2026-01', 'revenue': '500.50', 'payment_count': '3'},
     ],
   },
-  '/api/admin/reports/top-games': {
+  ApiConstant.adminReportsTopGames: {
     'top_games': [
       {'game_name': 'Arena Test', 'order_count': '7', 'completed_sales': 900.5},
     ],
   },
-  '/api/admin/reports/order-statuses': {
+  ApiConstant.adminReportsOrderStatuses: {
     'order_statuses': [
       {'status': 'Completed', 'order_count': '8'},
     ],
   },
 };
 
+// Service tests: verify endpoint composition, response validation, and JSON mapping.
 void main() {
   group('ReportService', () {
     test('loads and parses all report sections', () async {
@@ -62,16 +65,16 @@ void main() {
       expect(report.orderStatuses.single.status, 'Completed');
       expect(report.orderStatuses.single.orderCount, 8);
       expect(api.requests, [
-        '/api/admin/reports/summary',
-        '/api/admin/reports/monthly-revenue',
-        '/api/admin/reports/top-games',
-        '/api/admin/reports/order-statuses',
+        ApiConstant.adminReportsSummary,
+        ApiConstant.adminReportsMonthlyRevenue,
+        ApiConstant.adminReportsTopGames,
+        ApiConstant.adminReportsOrderStatuses,
       ]);
     });
 
     test('rejects a response with an invalid section shape', () async {
       final responses = _reportResponses()
-        ..['/api/admin/reports/top-games'] = {'top_games': null};
+        ..[ApiConstant.adminReportsTopGames] = {'top_games': null};
 
       expect(
         ReportService(_MockApiService(responses)).getAdminReport(),
@@ -86,12 +89,12 @@ void main() {
 
       expect(summary.pendingOrders, 2);
       expect(summary.paidPaymentCount, 8);
-      expect(api.requests, ['/api/admin/reports/summary']);
+      expect(api.requests, [ApiConstant.adminReportsSummary]);
     });
 
     test('rejects a malformed dashboard summary', () async {
       final api = _MockApiService({
-        '/api/admin/reports/summary': {'summary': []},
+        ApiConstant.adminReportsSummary: {'summary': []},
       });
 
       expect(ReportService(api).getSummary(), throwsFormatException);

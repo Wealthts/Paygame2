@@ -5,6 +5,8 @@ import 'package:mobile/model/admin/admin_report_model.dart';
 import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/view/admin/report_view.dart';
 
+/// Dashboard summary section.
+/// Fetches only ReportSummary and provides a future-based loading/error/refresh state.
 class AdminOverviewSection extends StatefulWidget {
   const AdminOverviewSection({super.key});
 
@@ -24,6 +26,7 @@ class _AdminOverviewSectionState extends State<AdminOverviewSection> {
     summaryFuture = reportService.getSummary();
   }
 
+  /// Replaces the FutureBuilder future and makes the refresh button/load state explicit.
   Future<void> refreshSummary() async {
     final future = reportService.getSummary();
 

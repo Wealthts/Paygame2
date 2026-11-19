@@ -2,6 +2,8 @@ import 'csv_export_service_stub.dart'
     if (dart.library.js_interop) 'csv_export_service_web.dart'
     as platform;
 
+/// Public CSV entry point used by ReportView.
+/// Conditional platform import keeps web-only APIs out of VM widget tests.
 class CsvExportService {
   static void download({
     required String fileName,

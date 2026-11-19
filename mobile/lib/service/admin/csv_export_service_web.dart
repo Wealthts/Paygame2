@@ -4,6 +4,8 @@ import 'dart:js_interop';
 
 import 'package:web/web.dart' as web;
 
+/// Browser implementation of CSV download.
+/// Builds a UTF-8 BOM file, Blob, and temporary download link.
 class CsvExportPlatform {
   static void download({
     required String fileName,

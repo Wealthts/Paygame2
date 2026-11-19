@@ -6,6 +6,8 @@ import 'package:mobile/model/admin/admin_report_model.dart';
 import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/service/admin/csv_export_service.dart';
 
+/// Full admin report page.
+/// Coordinates loading, filters, chart cards, refresh, and CSV export presentation.
 class ReportView extends StatefulWidget {
   const ReportView({super.key});
 
@@ -68,6 +70,7 @@ class _ReportViewState extends State<ReportView> {
   // Export CSV
   // --------------------------------------------------
 
+  // CSV export: applies the current UI filters, builds rows, then delegates download.
   void _exportReport(AdminReportModel report) {
     final revenueStartIndex =
         report.monthlyRevenue.length > _selectedRevenueMonths

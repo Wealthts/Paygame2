@@ -5,6 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mobile/core/app_colors.dart';
 import 'package:mobile/core/app_theme.dart';
 
+/// Shared test utility: verifies that the app-wide theme contract is consistent.
+/// Feature behavior belongs in the focused unit/widget test file, not this helper.
 /// Shared UI contract smoke test for widget test files whose view requires
 /// complex backend providers. Feature-specific service/controller behaviour is
 /// covered by unit and focused widget tests in this suite.

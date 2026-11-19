@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/model/admin/admin_report_model.dart';
 
+// Model tests: verify JSON conversion and numeric validation only.
+// API/network behavior belongs in report_service_test.dart.
 void main() {
   group('Admin report models', () {
     test('parses summary fields from numeric and string values', () {

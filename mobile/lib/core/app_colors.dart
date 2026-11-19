@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 /// Central color palette for PayGame.
+/// Views should reference this file instead of hardcoding report/dashboard colors.
 /// Keep the values in sync with the approved red / gold / white UI direction.
 abstract final class AppColors {
   static const Color red = Color(0xFFB0151F);

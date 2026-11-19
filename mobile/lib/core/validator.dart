@@ -1,4 +1,5 @@
 /// Pure validators shared by form fields and unit tests.
+/// Core validation stays UI-independent so forms and test cases reuse the same rules.
 abstract final class AppValidator {
   static String? requiredText(
     String? value, {

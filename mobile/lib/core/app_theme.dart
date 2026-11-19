@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:mobile/core/app_colors.dart';
 
+/// Builds the app-wide Material 3 theme from the shared PayGame palette.
+/// Report and admin widgets inherit these colors, typography, cards, and controls.
 abstract final class AppTheme {
   static ThemeData get light {
     final base = ThemeData(
