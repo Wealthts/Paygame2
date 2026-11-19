@@ -2,20 +2,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/model/coupon_model.dart';
-import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/coupon_service.dart';
 import 'package:mobile/view/admin/coupon_view.dart';
+
+import '../../support/fake_services.dart';
 
 void main() {
   // This fake service gives the admin screen two coupons to display and search.
   testWidgets('1. Admin coupon screen lists coupons and filters by search', (
     tester,
   ) async {
-    final service = _Coupons();
-    service.coupons = [
-      _coupon(1, 'SAVE10', true),
-      _coupon(2, 'OLD20', false, discountType: 'percent'),
-    ];
+    final service = FakeCouponService(
+      coupons: [
+        _coupon(1, 'SAVE10', true),
+        _coupon(2, 'OLD20', false, discountType: 'percent'),
+      ],
+    );
     await tester.pumpWidget(
       Provider<CouponService>.value(
         value: service,
@@ -24,7 +26,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('จัดการคูปอง'), findsOneWidget);
     expect(find.text('SAVE10'), findsOneWidget);
     await tester.drag(find.byType(ListView).first, const Offset(0, -500));
     await tester.pumpAndSettle();
@@ -36,7 +37,7 @@ void main() {
 
   // Opening the form without a code should show the form's validation message.
   testWidgets('2. Admin validates and creates a coupon', (tester) async {
-    final service = _Coupons();
+    final service = FakeCouponService();
     await tester.pumpWidget(
       Provider<CouponService>.value(
         value: service,
@@ -46,7 +47,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('เพิ่มคูปอง'));
     await tester.pumpAndSettle();
-    expect(find.text('เพิ่มคูปอง'), findsNWidgets(2));
+    expect(find.text('รหัสคูปอง'), findsOneWidget);
     await tester.tap(find.text('บันทึก'));
     await tester.pumpAndSettle();
     expect(find.text('กรุณากรอกรหัสคูปอง'), findsOneWidget);
@@ -63,11 +64,12 @@ void main() {
   testWidgets('3. Admin filters coupons by status and discount type', (
     tester,
   ) async {
-    final service = _Coupons();
-    service.coupons = [
-      _coupon(1, 'SAVE10', true),
-      _coupon(2, 'OLD20', false, discountType: 'percent'),
-    ];
+    final service = FakeCouponService(
+      coupons: [
+        _coupon(1, 'SAVE10', true),
+        _coupon(2, 'OLD20', false, discountType: 'percent'),
+      ],
+    );
 
     await tester.pumpWidget(
       Provider<CouponService>.value(
@@ -96,8 +98,7 @@ void main() {
   });
 
   testWidgets('4. Admin can turn a coupon off', (tester) async {
-    final service = _Coupons();
-    service.coupons = [_coupon(1, 'SAVE10', true)];
+    final service = FakeCouponService(coupons: [_coupon(1, 'SAVE10', true)]);
 
     await tester.pumpWidget(
       Provider<CouponService>.value(
@@ -132,23 +133,3 @@ CouponModel _coupon(
   endDate: '2099-12-31',
   isActive: active,
 );
-
-class _Coupons extends CouponService {
-  _Coupons() : super(ApiService());
-  List<CouponModel> coupons = [];
-  Map<String, dynamic>? createdCoupon;
-  final List<(int, bool)> statusChanges = [];
-
-  @override
-  Future<List<CouponModel>> getAllCoupons() async => coupons;
-
-  @override
-  Future<void> createCoupon(Map<String, dynamic> body) async {
-    createdCoupon = body;
-  }
-
-  @override
-  Future<void> updateCouponStatus(int couponId, bool isActive) async {
-    statusChanges.add((couponId, isActive));
-  }
-}

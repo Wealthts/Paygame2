@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 import 'package:mobile/controller/auth_controller.dart';
+import 'package:mobile/model/coupon_model.dart';
 import 'package:mobile/model/game_model.dart';
 import 'package:mobile/model/order_model.dart';
 import 'package:mobile/model/package_model.dart';
@@ -17,6 +18,7 @@ import 'package:mobile/service/admin/report_service.dart';
 import 'package:mobile/service/customer/customer_game_service.dart';
 import 'package:mobile/service/customer/customer_package_service.dart';
 import 'package:mobile/service/customer/customer_profile_service.dart';
+import 'package:mobile/service/coupon_service.dart';
 import 'package:mobile/service/order_service.dart';
 import 'package:mobile/service/payment_service.dart';
 import 'package:mobile/service/point_service.dart';
@@ -233,10 +235,63 @@ class FakeReceiptService extends ReceiptService {
   Future<List<ReceiptModel>> getMyReceipts() async => [testReceipt];
 }
 
-class FakeUserCouponService extends UserCouponService {
-  FakeUserCouponService() : super(ApiService());
+class FakeCouponService extends CouponService {
+  FakeCouponService({this.coupons = const []}) : super(ApiService());
+
+  final List<CouponModel> coupons;
+  Map<String, dynamic>? createdCoupon;
+  final List<(int, bool)> statusChanges = [];
+
   @override
-  Future<List<CustomerCouponModel>> getMyCoupons() async => [];
+  Future<List<CouponModel>> getAllCoupons() async => coupons;
+
+  @override
+  Future<void> createCoupon(Map<String, dynamic> body) async {
+    createdCoupon = body;
+  }
+
+  @override
+  Future<void> updateCouponStatus(int couponId, bool isActive) async {
+    statusChanges.add((couponId, isActive));
+  }
+}
+
+class FakeUserCouponService extends UserCouponService {
+  FakeUserCouponService({
+    this.customerCoupons = const [],
+    this.userCoupons = const [],
+    this.availableUsers = const [],
+  }) : super(ApiService());
+
+  final List<CustomerCouponModel> customerCoupons;
+  final List<UserCouponModel> userCoupons;
+  final List<UserOptionModel> availableUsers;
+  String? claimedCode;
+  int? assignedUserId;
+  int? assignedCouponId;
+
+  @override
+  Future<List<UserCouponModel>> getAllUserCoupons() async => userCoupons;
+
+  @override
+  Future<List<UserOptionModel>> getAvailableUsers() async => availableUsers;
+
+  @override
+  Future<List<CustomerCouponModel>> getMyCoupons() async => customerCoupons;
+
+  @override
+  Future<void> claimCouponByCode(String code) async {
+    claimedCode = code;
+  }
+
+  @override
+  Future<void> assignCoupon({
+    required int userId,
+    required int couponId,
+  }) async {
+    assignedUserId = userId;
+    assignedCouponId = couponId;
+  }
 }
 
 class FakeCustomerProfileService extends CustomerProfileService {

@@ -2,9 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/model/user_coupon_model.dart';
-import 'package:mobile/service/api_service.dart';
 import 'package:mobile/service/user_coupon_service.dart';
 import 'package:mobile/view/customer/coupon_view.dart';
+
+import '../../support/fake_services.dart';
 
 void main() {
   // This uses one usable coupon and one disabled coupon to check the filter.
@@ -13,8 +14,8 @@ void main() {
   ) async {
     await tester.pumpWidget(
       Provider<UserCouponService>.value(
-        value: _CustomerCoupons(
-          coupons: [
+        value: FakeUserCouponService(
+          customerCoupons: [
             _customerCoupon('READY', true),
             _customerCoupon('DISABLED', false),
           ],
@@ -37,7 +38,7 @@ void main() {
 
   // Claiming a code is checked using a fake service, so no backend is involved.
   testWidgets('7. Customer validates and claims a coupon code', (tester) async {
-    final service = _CustomerCoupons();
+    final service = FakeUserCouponService();
     await tester.pumpWidget(
       Provider<UserCouponService>.value(
         value: service,
@@ -74,15 +75,3 @@ CustomerCouponModel _customerCoupon(String code, bool active) =>
       usedAt: null,
       couponIsActive: active,
     );
-
-class _CustomerCoupons extends UserCouponService {
-  _CustomerCoupons({this.coupons = const []}) : super(ApiService());
-  final List<CustomerCouponModel> coupons;
-  String? claimedCode;
-  @override
-  Future<List<CustomerCouponModel>> getMyCoupons() async => coupons;
-  @override
-  Future<void> claimCouponByCode(String code) async {
-    claimedCode = code;
-  }
-}
