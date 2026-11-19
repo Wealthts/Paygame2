@@ -15,6 +15,8 @@ import 'package:mobile/view/admin/user_management_view.dart';
 import 'package:mobile/view/admin/report_view.dart';
 import 'package:mobile/view/admin/admin_overview_view.dart';
 
+/// Main admin shell.
+/// Hosts the overview and menu navigation to feature views, including ReportView.
 class AdminHomePageView extends StatelessWidget {
   const AdminHomePageView({super.key});
 

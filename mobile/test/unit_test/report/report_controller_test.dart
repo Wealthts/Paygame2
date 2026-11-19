@@ -4,6 +4,8 @@ import 'package:mobile/service/api_service.dart';
 
 import '../../support/fake_services.dart';
 
+// Controller tests: verify presentation state, listener transitions, and recovery.
+// Network data is supplied by FakeReportService from test/support.
 void main() {
   group('ReportController', () {
     test('loads report and notifies listeners around the request', () async {

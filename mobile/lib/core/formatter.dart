@@ -1,4 +1,5 @@
 /// Formatting helpers used by customer and administrator screens.
+/// Report UI uses these utilities as the presentation format for revenue/status values.
 /// No intl dependency is required.
 abstract final class AppFormatter {
   static String formatNumber(num value) {

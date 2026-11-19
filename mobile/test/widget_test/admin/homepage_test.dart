@@ -12,12 +12,14 @@ import 'package:mobile/view/admin/report_view.dart';
 
 import '../../support/fake_services.dart';
 
+// Auth setup: creates the signed-in admin state used by dashboard navigation tests.
 Future<AuthController> _signedInAdmin() async {
   final controller = AuthController(FakeAuthService());
   await controller.login(username: 'admin', password: 'password');
   return controller;
 }
 
+// Widget setup: combines AuthController and ReportService providers.
 Future<void> _pumpDashboard(
   WidgetTester tester,
   FakeReportService reportService,
@@ -39,6 +41,7 @@ Future<void> _pumpDashboard(
   await tester.pumpAndSettle();
 }
 
+// Dashboard widget contract: admin identity, overview, menu navigation, and logout.
 void main() {
   testPayGameThemeContract('Admin dashboard');
 

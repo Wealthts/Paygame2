@@ -10,6 +10,7 @@ import 'package:mobile/view/admin/report_view.dart';
 import '../../support/fake_services.dart';
 import '../../support/theme_widget_test_helper.dart';
 
+// Widget setup: supplies only the summary service required by AdminOverviewSection.
 Future<void> _pumpOverview(
   WidgetTester tester,
   FakeReportService service,
@@ -27,6 +28,7 @@ Future<void> _pumpOverview(
   await tester.pumpAndSettle();
 }
 
+// Overview widget contract: summary rendering, error/retry, and report navigation.
 void main() {
   testPayGameThemeContract('Admin overview');
 

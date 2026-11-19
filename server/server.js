@@ -46,6 +46,7 @@ const couponRoutes = require('./routes/coupon');
 const couponAdminRoutes = require('./routes/coupon_admin');
 const userCouponRoutes = require('./routes/user_coupon');
 const userCouponAdminRoutes = require('./routes/user_coupon_admin');
+// Mounted at /api/admin/reports; report routes apply both auth and admin guards.
 const reportRoutes = require('./routes/report');
 
 // 8. Register Routes

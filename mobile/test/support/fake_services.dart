@@ -102,6 +102,7 @@ final testReceipt = ReceiptModel(
   totalAmount: 159,
 );
 
+// Shared report fixtures: use these values for repeatable widget/unit expectations.
 const testReportSummary = ReportSummary(
   totalOrders: 10,
   pendingOrders: 2,
@@ -129,6 +130,8 @@ const testAdminReport = AdminReportModel(
   ],
 );
 
+/// In-memory ReportService substitute for widget and controller tests.
+/// Configure summaryError/reportError and inspect *Calls counters for behavior assertions.
 class FakeReportService extends ReportService {
   FakeReportService({
     this.summary = testReportSummary,
